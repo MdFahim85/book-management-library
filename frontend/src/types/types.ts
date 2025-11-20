@@ -8,3 +8,9 @@ export type Author = {
   id: number;
   name: string;
 };
+
+declare global {
+  interface ImportMetaEnv {
+    VITE_BACKEND_ROOT: string;
+  }
+}

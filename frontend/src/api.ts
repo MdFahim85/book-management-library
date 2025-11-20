@@ -43,7 +43,9 @@ export const fetchBooksByAuthor = async ({
 }: {
   authorId: number;
 }) => {
-  const res = await fetch(`http://localhost:3000/authors/${authorId}`);
+  const res = await fetch(
+    `${import.meta.env.VITE_BACKEND_ROOT}/authors/${authorId}`
+  );
   if (res.ok) {
     return res.json();
   }
