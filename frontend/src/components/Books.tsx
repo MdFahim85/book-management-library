@@ -26,7 +26,7 @@ function Books() {
 
     if (!selectedAuthor) return booksData.books;
 
-    return booksData.books.filter(
+    return booksData?.books?.filter(
       (book: Book) => book.author_id === selectedAuthor
     );
   }, [booksData, selectedAuthor]);
@@ -88,7 +88,7 @@ function Books() {
       </div>
 
       <div className="flex flex-col gap-3 mb-10">
-        {books.length ? (
+        {books?.length ? (
           books.map((book: Book) => (
             <div
               key={book.id}

@@ -30,7 +30,7 @@ function Authors() {
       </div>
 
       <div className="flex flex-col gap-3 mb-10 mt-4">
-        {data.authors.length ? (
+        {data?.authors?.length ? (
           data.authors.map((author: Author) => (
             <div
               key={author.id}

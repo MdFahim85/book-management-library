@@ -1,20 +1,27 @@
-import { Request, Response } from "express";
+import cors from "cors";
+import express, { ErrorRequestHandler, RequestHandler } from "express";
 
-const express = require("express");
+import env from "./config/env";
+import pgClient from "./config/pgClient";
+import router from "./routes";
+
 const app = express();
-const { client } = require("./config/dbConfig");
-const cors = require("cors");
 
 app.use(express.json());
 app.use(cors());
 
-// Authors
-app.use("/authors", require("./routes/authorRoute"));
+app.use(router);
 
-// Books
-app.use("/books", require("./routes/bookRoute"));
+app.use((_, __, next) => next(new Error("Route Not Found")));
+app.use(((err, _, res, __) => {
+  if (!env.isProduction) console.log("Error: %o", err);
 
-app.listen(process.env.port, async () => {
-  await client.connect();
+  if (res.headersSent) return console.log("Already Sent Response");
+
+  res.status(500).json({ error: err });
+}) as ErrorRequestHandler);
+
+app.listen(env.port, async () => {
+  await pgClient.connect();
   console.log("server running");
 });
