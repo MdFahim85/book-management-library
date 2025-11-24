@@ -1,8 +1,13 @@
 import { RequestHandler } from "express";
 
 import Author from "../models/Author";
+import ROUTEMAP from "../routes/ROUTEMAP";
 
-export const getAuthors: RequestHandler = async (_, res, next) => {
+export const getAuthors: RequestHandler<{}, Author[]> = async (
+  _,
+  res,
+  next
+) => {
   try {
     res.json(await Author.getAllAuthors());
   } catch (error) {
@@ -10,12 +15,12 @@ export const getAuthors: RequestHandler = async (_, res, next) => {
   }
 };
 
-export const getAuthorById: RequestHandler<Pick<Author, "id">> = async (
+export const getAuthorById: RequestHandler<{ id?: string }, Author> = async (
   req,
   res
 ) => {
   const { id } = req.params;
-  const author = await Author.getAuthorById(id);
+  const author = await Author.getAuthorById(parseInt(id));
   if (!author) throw new Error("No author found");
   res.json(author);
 };
@@ -32,21 +37,23 @@ export const addAuthor: RequestHandler<
 };
 
 export const editAuthor: RequestHandler<
-  Pick<Author, "id">,
+  Partial<typeof ROUTEMAP.authors._params>,
   { message: string; data: Author },
   Partial<Author>
 > = async (req, res) => {
   const { name = "" } = req.body;
   const { id } = req.params;
-  const author = await Author.editAuthor(id, { name });
+  const author = await Author.editAuthor(parseInt(id), { name });
   if (!author) throw new Error("Failed to update the book");
-  res.json({ message: "Author has been updated", data: { ...author, id } });
+  res.json({
+    message: "Author has been updated",
+    data: { ...author, id: parseInt(id) },
+  });
 };
 
-export const deleteAuthor: RequestHandler<{ id: number }> = async (
-  req,
-  res
-) => {
+export const deleteAuthor: RequestHandler<
+  Partial<typeof ROUTEMAP.authors._params>
+> = async (req, res) => {
   const { id } = req.params;
-  res.json(await Author.deleteAuthor(id));
+  res.json(await Author.deleteAuthor(parseInt(id)));
 };

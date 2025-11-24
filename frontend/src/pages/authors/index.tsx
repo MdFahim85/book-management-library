@@ -1,18 +1,22 @@
-import type { Author } from "../types/types";
-import AuthorCard from "./AuthorCard";
-
-import { useGetAuthors } from "../hooks/authorHooks";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
-function Authors() {
-  const { data, isPending, isError, error } = useGetAuthors();
+import { modifiedFetch } from "../../misc/modifiedFetch";
+import AuthorCard from "../../components/AuthorCard";
+import { EMPTY_ARRAY } from "../../misc";
 
-  if (isPending) {
-    return <div>loading</div>;
-  }
-  if (isError) {
-    return <div>{error.message}</div>;
-  }
+import type { getAuthors } from "@backend/controllers/authors";
+import type { GetRes } from "@backend/types/req-res";
+import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
+
+function Authors() {
+  const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
+    queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
+    queryFn: () =>
+      modifiedFetch<GetRes<typeof getAuthors>>(
+        Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get
+      ),
+  });
 
   return (
     <div className="w-full flex flex-col py-6 ">
@@ -30,8 +34,8 @@ function Authors() {
       </div>
 
       <div className="flex flex-col gap-3 mb-10 mt-4">
-        {data?.authors?.length ? (
-          data.authors.map((author: Author) => (
+        {authors.length ? (
+          authors.map((author) => (
             <div
               key={author.id}
               className="bg-white border border-neutral-200 shadow-sm rounded-lg p-4 

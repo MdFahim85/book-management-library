@@ -22,15 +22,15 @@ export default class Book {
   }
   static async getBooksByAuthorId(authorId: number) {
     const { rows: books } = await pgClient.query<Book>(
-      /*sql*/ `SELECT * FROM "book" WHERE "author_id" = ($1)`,
+      /*sql*/ `SELECT * FROM "book" WHERE "authorId" = ($1)`,
       [authorId]
     );
 
-    return books[0];
+    return books;
   }
   static async addBook(book: Pick<Book, "name" | "authorId">) {
     const { rowCount, oid } = await pgClient.query(
-      /*sql*/ `INSERT INTO "book" ("name", "author_id") VALUES ($1, $2)`,
+      /*sql*/ `INSERT INTO "book" ("name", "authorId") VALUES ($1, $2)`,
       [book.name, book.authorId]
     );
 
@@ -40,7 +40,7 @@ export default class Book {
   }
   static async editBook(id: number, book: Pick<Book, "name" | "authorId">) {
     const { rowCount } = await pgClient.query(
-      /*sql*/ `UPDATE "book" SET "name" = ($1), "author_id" = ($2) WHERE "id" = ($3)`,
+      /*sql*/ `UPDATE "book" SET "name" = ($1), "authorId" = ($2) WHERE "id" = ($3)`,
       [book.name, book.authorId, id]
     );
     if (!rowCount) return undefined;

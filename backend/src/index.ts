@@ -1,4 +1,5 @@
 import cors from "cors";
+import morgan from "morgan";
 import express, { ErrorRequestHandler, RequestHandler } from "express";
 
 import env from "./config/env";
@@ -7,6 +8,7 @@ import router from "./routes";
 
 const app = express();
 
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors());
 
@@ -14,7 +16,8 @@ app.use(router);
 
 app.use((_, __, next) => next(new Error("Route Not Found")));
 app.use(((err, _, res, __) => {
-  if (!env.isProduction) console.log("Error: %o", err);
+  if (!env.isProduction)
+    console.dir(err, { colors: true, depth: 6, showHidden: true });
 
   if (res.headersSent) return console.log("Already Sent Response");
 

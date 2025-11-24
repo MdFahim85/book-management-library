@@ -1,32 +1,74 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import type { Author } from "../types/types";
-import { useDeleteAuthor, useEditAuthor } from "../hooks/authorHooks";
+import { Link } from "react-router-dom";
+
+import { modifiedFetch } from "../misc/modifiedFetch";
+import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import Form from "./Form";
+
+import type Author from "@backend/models/Author";
+import type { deleteAuthor, editAuthor } from "@backend/controllers/authors";
+import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 function AuthorCard({ author }: { author: Author }) {
+  const queryClient = useQueryClient();
+
   const [editActive, setEditActive] = useState(false);
   const [name, setName] = useState<string>(author.name);
-  const { mutate: editAuthor, isPending: isEditing } = useEditAuthor();
-  const { mutate: deleteAuthor, isPending: isDeleting } = useDeleteAuthor();
 
-  const handleEdit = async () => {
-    editAuthor(
-      { authorId: author.id, name },
-      {
-        onSuccess: () => {
-          setEditActive(false);
-        },
-        onError: (error) => {
-          alert(error.message);
-        },
-      }
-    );
-  };
+  const { mutate: mutateEditAuthor, isPending: isEditing } = useMutation({
+    mutationFn: () =>
+      modifiedFetch<GetRes<typeof editAuthor>>(
+        Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.put,
+        {
+          method: "put",
+          body: JSON.stringify({ name } satisfies GetReqBody<
+            typeof editAuthor
+          >),
+        }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
+      });
+      setEditActive(false);
+    },
+    onError: (error) => {
+      alert(error.message);
+    },
+    throwOnError: true,
+  });
+
+  const { mutate: mutateDeleteAuthor, isPending: isDeleting } = useMutation({
+    mutationFn: (id: number) =>
+      modifiedFetch<GetRes<typeof deleteAuthor>>(
+        Server_ROUTEMAP.authors.root +
+          Server_ROUTEMAP.authors.delete.replace(
+            Server_ROUTEMAP.authors._params.id,
+            id.toString()
+          ),
+        { method: "delete" }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
+      });
+    },
+    onError: (error) => {
+      alert(error.message);
+    },
+    throwOnError: true,
+  });
 
   return (
     <div className="w-full">
       <div className="flex items-center gap-4 w-full p-4">
-        <div className="font-semibold text-neutral-800 tracking-wide">
-          {author.name.toUpperCase()}
+        <div>
+          <Link to={`/books/author/${author.id}`}>
+            <p className="font-semibold text-neutral-800 tracking-wide">
+              {author.name}
+            </p>
+          </Link>
         </div>
 
         <div className="ms-auto flex gap-3 text-neutral-100">
@@ -38,7 +80,7 @@ function AuthorCard({ author }: { author: Author }) {
           </button>
 
           <button
-            onClick={() => deleteAuthor({ authorId: author.id })}
+            onClick={() => mutateDeleteAuthor(author.id)}
             disabled={isDeleting}
             className="bg-red-500 px-4 py-1.5 rounded-md hover:bg-red-600 transition-colors text-white text-sm font-medium disabled:bg-red-900 disabled:cursor-not-allowed"
           >
@@ -51,11 +93,8 @@ function AuthorCard({ author }: { author: Author }) {
         <>
           <div className="fixed inset-0 bg-neutral-300/75 z-20"></div>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleEdit();
-            }}
+          <Form
+            onSubmit={() => mutateEditAuthor()}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
                      z-30 bg-white w-full max-w-md shadow-lg rounded-xl p-6 
                      flex flex-col gap-4 border border-neutral-200"
@@ -99,7 +138,7 @@ function AuthorCard({ author }: { author: Author }) {
                 Cancel
               </button>
             </div>
-          </form>
+          </Form>
         </>
       )}
     </div>
