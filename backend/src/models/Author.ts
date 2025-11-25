@@ -1,49 +1,45 @@
-import pgClient from "../config/pgClient";
+import { eq } from "drizzle-orm";
 
-export default class Author {
-  id!: number;
-  name!: string;
+import { db } from "../config/database";
+import { Author, author } from "../db/schemas/author";
 
-  static async getAllAuthors() {
-    const { rows: authors } = await pgClient.query<Author>(
-      /*sql*/ `SELECT * FROM "author"`
-    );
-
+export default class AuthorModel {
+  static async getAllAuthors(): Promise<Author[]> {
+    const authors = await db.select().from(author);
     return authors;
   }
-  static async getAuthorById(id: number) {
-    const { rows: authors } = await pgClient.query<Author>(
-      /*sql*/ `SELECT * FROM "author" WHERE "id" = ($1) LIMIT 1`,
-      [id]
-    );
 
+  static async getAuthorById(id: number): Promise<Author | undefined> {
+    const authors = await db
+      .select()
+      .from(author)
+      .where(eq(author.id, id))
+      .limit(1);
     return authors[0];
   }
-  static async addAuthor(author: Pick<Author, "name">) {
-    const { rowCount, oid } = await pgClient.query(
-      /*sql*/ `INSERT INTO "author" ("name") VALUES ($1)`,
-      [author.name]
-    );
 
-    if (!rowCount) return undefined;
-
-    return { ...author, id: oid } satisfies Author;
+  static async addAuthor(
+    authorData: Pick<Author, "name">
+  ): Promise<Author | undefined> {
+    const [newAuthor] = await db.insert(author).values(authorData).returning();
+    if (!newAuthor) return undefined;
+    return newAuthor satisfies Author;
   }
-  static async editAuthor(id: number, author: Pick<Author, "name">) {
-    const { rowCount } = await pgClient.query(
-      /*sql*/ `UPDATE "author" SET "name" = ($1) WHERE "id" = ($2)`,
-      [author.name, id]
-    );
-    if (!rowCount) return undefined;
 
-    return author;
+  static async editAuthor(
+    id: number,
+    authorData: Partial<Author>
+  ): Promise<Author | undefined> {
+    const [updatedAuthor] = await db
+      .update(author)
+      .set(authorData)
+      .where(eq(author.id, id))
+      .returning();
+    return updatedAuthor;
   }
-  static async deleteAuthor(id: number) {
-    const { rowCount } = await pgClient.query(
-      /*sql*/ `DELETE FROM "author" WHERE "id"=($1)`,
-      [id]
-    );
-    if (!rowCount) return undefined;
+  static async deleteAuthor(id: number): Promise<string | undefined> {
+    const result = await db.delete(author).where(eq(author.id, id)).returning();
+    if (!result.length) return undefined;
     return `Author with id ${id} deleted`;
   }
 }

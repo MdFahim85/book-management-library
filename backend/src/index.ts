@@ -3,7 +3,6 @@ import morgan from "morgan";
 import express, { ErrorRequestHandler, RequestHandler } from "express";
 
 import env from "./config/env";
-import pgClient from "./config/pgClient";
 import router from "./routes";
 
 const app = express();
@@ -24,7 +23,6 @@ app.use(((err, _, res, __) => {
   res.status(500).json({ error: err });
 }) as ErrorRequestHandler);
 
-app.listen(env.port, async () => {
-  await pgClient.connect();
+app.listen(env.port, () => {
   console.log("server running");
 });
