@@ -1,8 +1,27 @@
-import { eq } from "drizzle-orm";
+import { eq, InferSelectModel } from "drizzle-orm";
+import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 
 import { db } from "../config/database";
-import { Author, author } from "../db/schemas/author";
 
+// Author Schema
+export const author = pgTable("author", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+});
+
+// Author Schema Validators
+export const addAuthorSchema = createInsertSchema(author, {
+  name: (schema) => schema.min(3).max(255),
+});
+export const updateAuthorSchema = createUpdateSchema(author, {
+  name: (schema) => schema.min(3).max(255),
+});
+
+// Author type
+export type Author = InferSelectModel<typeof author>;
+
+// Author Model
 export default class AuthorModel {
   static async getAllAuthors(): Promise<Author[]> {
     const authors = await db.select().from(author);

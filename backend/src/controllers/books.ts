@@ -1,14 +1,14 @@
 import { RequestHandler } from "express";
 
-import {
+import BookModel, {
   Book,
-  bookAuthorIdParamSchema,
-  bookIdParamSchema,
   insertBookSchema,
   updateBookSchema,
-} from "../db/schemas/book";
-import BookModel from "../models/Book";
+} from "../models/Book";
 import ROUTEMAP from "../routes/ROUTEMAP";
+import { authorIdValidator, idValidator } from "../utils/validators";
+import ResponseError from "../utils/ResponseError";
+import status from "http-status";
 
 export const getBooks: RequestHandler<{}, Book[]> = async (_, res) =>
   res.json(await BookModel.getAllBooks());
@@ -16,10 +16,9 @@ export const getBooks: RequestHandler<{}, Book[]> = async (_, res) =>
 export const getBookDetails: RequestHandler<
   typeof ROUTEMAP.books._params
 > = async (req, res) => {
-  const book = await BookModel.getBookById(
-    bookIdParamSchema.parse(req.params.id)
-  );
-  if (!book) throw new Error("No book found");
+  const { id } = await idValidator.parseAsync(req.params);
+  const book = await BookModel.getBookById(id);
+  if (!book) throw new ResponseError("No book found", status.NOT_FOUND);
   res.json(book);
 };
 
@@ -27,11 +26,8 @@ export const getBooksByAuthorId: RequestHandler<
   typeof ROUTEMAP.books._params,
   Book[]
 > = async (req, res) => {
-  res.json(
-    await BookModel.getBooksByAuthorId(
-      bookAuthorIdParamSchema.parse(req.params.authorId)
-    )
-  );
+  const { authorId } = await authorIdValidator.parseAsync(req.params);
+  res.json(await BookModel.getBooksByAuthorId(authorId));
 };
 
 export const addBook: RequestHandler<
@@ -39,8 +35,10 @@ export const addBook: RequestHandler<
   { message: string; data: Book },
   Partial<Book>
 > = async (req, res) => {
-  const book = await BookModel.addBook(insertBookSchema.parse(req.body));
-  if (!book) throw new Error("Failed to add book");
+  const book = await BookModel.addBook(
+    await insertBookSchema.parseAsync(req.body)
+  );
+  if (!book) throw new ResponseError("Failed to add book", status.BAD_REQUEST);
 
   res.status(201).json({ message: "New book Added", data: book });
 };
@@ -50,20 +48,20 @@ export const editBook: RequestHandler<
   { message: string; data: Book },
   Partial<Book>
 > = async (req, res) => {
+  const { id } = await idValidator.parseAsync(req.params);
   const book = await BookModel.editBook(
-    bookIdParamSchema.parse(req.params.id),
-    updateBookSchema.parse(req.body)
+    id,
+    await updateBookSchema.parseAsync(req.body)
   );
-  if (!book) throw new Error("Failed to update the book");
+  if (!book)
+    throw new ResponseError("Failed to update the book", status.BAD_REQUEST);
 
-  res.json({
-    message: "Book has been updated",
-    data: book,
-  });
+  res.json({ message: "Book has been updated", data: book });
 };
 
 export const deleteBook: RequestHandler<
   Partial<typeof ROUTEMAP.books._params>
 > = async (req, res) => {
-  res.json(await BookModel.deleteBook(bookIdParamSchema.parse(req.params.id)));
+  const { id } = await idValidator.parseAsync(req.params);
+  res.json(await BookModel.deleteBook(id));
 };

@@ -4,6 +4,11 @@ import express, { ErrorRequestHandler, RequestHandler } from "express";
 
 import env from "./config/env";
 import router from "./routes";
+import { ZodError } from "zod";
+import ResponseError from "./utils/ResponseError";
+import status from "http-status";
+import { DrizzleError, DrizzleQueryError } from "drizzle-orm";
+import { globalErrorHandler } from "./controllers/_middlewares";
 
 const app = express();
 
@@ -13,15 +18,10 @@ app.use(cors());
 
 app.use(router);
 
-app.use((_, __, next) => next(new Error("Route Not Found")));
-app.use(((err, _, res, __) => {
-  if (!env.isProduction)
-    console.dir(err, { colors: true, depth: 6, showHidden: true });
-
-  if (res.headersSent) return console.log("Already Sent Response");
-
-  res.status(500).json({ error: err });
-}) as ErrorRequestHandler);
+app.use(() => {
+  throw new ResponseError("Route Not Found", status.NOT_FOUND);
+});
+app.use(globalErrorHandler);
 
 app.listen(env.port, () => {
   console.log("server running");

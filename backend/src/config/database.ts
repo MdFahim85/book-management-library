@@ -4,7 +4,11 @@ import { Pool } from "pg";
 import env from "./env";
 
 const pool = new Pool({
-  connectionString: env.dbURL,
+  database: env.dbName,
+  user: env.dbUser,
+  password: env.dbPassword,
+  host: env.dbHost,
+  port: env.dbPort,
 });
 
 export const db = drizzle(pool);

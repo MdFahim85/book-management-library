@@ -6,12 +6,12 @@ declare global {
       DB_HOST?: string | undefined;
       DB_PORT?: string | undefined;
       DB_NAME?: string | undefined;
-      DB_URL?: string | undefined;
+
       PORT?: string | undefined;
     }
   }
 
-  function parseInt(string?: string, radix?: number): number;
+  function parseInt(string?: string | number, radix?: number): number;
 }
 
 export {};

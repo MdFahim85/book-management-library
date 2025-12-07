@@ -96,7 +96,7 @@ function AddBook() {
         <button
           className="w-full text-white font-semibold bg-emerald-600 px-4 py-2 rounded-md transition-colors hover:bg-emerald-500 disabled:bg-emerald-900 disabled:text-gray-400 disabled:cursor-not-allowed"
           type="submit"
-          disabled={!name || !authorId || isAdding}
+          disabled={!name || authorId === -1 || isAdding}
         >
           {isAdding ? "Adding..." : "Add Book"}
         </button>
