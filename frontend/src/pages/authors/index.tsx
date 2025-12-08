@@ -1,13 +1,38 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+  type ColumnDef,
+} from "@tanstack/react-table";
+import { Button } from "../../components/ui/button";
+import { Card, CardHeader, CardTitle } from "../../components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../components/ui/table";
 
-import { modifiedFetch } from "../../misc/modifiedFetch";
+import AddAuthorModal from "../../components/AddAuthorModal";
 import AuthorCard from "../../components/AuthorCard";
 import { EMPTY_ARRAY } from "../../misc";
+import { modifiedFetch } from "../../misc/modifiedFetch";
+import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
 
 import type { getAuthors } from "@backend/controllers/authors";
+import type { Author } from "@backend/models/Author";
 import type { GetRes } from "@backend/types/req-res";
-import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
+
+const columns: ColumnDef<Author>[] = [
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+];
 
 function Authors() {
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
@@ -18,39 +43,88 @@ function Authors() {
       ),
   });
 
+  const table = useReactTable({
+    data: authors,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
   return (
-    <div className="w-full flex flex-col py-6 ">
-      <div className="text-4xl text-center font-bold text-neutral-800 mb-6">
-        Author List
-      </div>
+    <Card className="my-4">
+      <CardHeader>
+        <CardTitle className="text-4xl font-bold text-neutral-800 mb-6">
+          Author Management
+        </CardTitle>
+        <div className="flex items-center gap-4 justify-end me-4">
+          <AddAuthorModal />
+        </div>
 
-      <div className="me-auto">
-        <Link
-          to={"/authors/add"}
-          className="bg-emerald-500  px-4 py-2 rounded-md hover:bg-emerald-600 transition-colors text-white text-sm font-medium"
-        >
-          Add Author
-        </Link>
-      </div>
-
-      <div className="flex flex-col gap-3 mb-10 mt-4">
-        {authors.length ? (
-          authors.map((author) => (
-            <div
-              key={author.id}
-              className="bg-white border border-neutral-200 shadow-sm rounded-lg p-4 
-                     transition-colors hover:bg-neutral-50"
-            >
-              <AuthorCard author={author} />
-            </div>
-          ))
-        ) : (
-          <div className="pt-10 text-center text-2xl text-red-400">
-            No authors found
-          </div>
-        )}
-      </div>
-    </div>
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((author) => (
+                    <TableCell key={author.id}>
+                      <AuthorCard author={row.original} />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-red-400 text-xl"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+        <div className="flex items-center justify-center space-x-2 py-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </CardHeader>
+    </Card>
   );
 }
 

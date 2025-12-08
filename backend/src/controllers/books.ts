@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 
 import BookModel, {
-  Book,
+  type Book,
   insertBookSchema,
   updateBookSchema,
 } from "../models/Book";
@@ -14,7 +14,7 @@ export const getBooks: RequestHandler<{}, Book[]> = async (_, res) =>
   res.json(await BookModel.getAllBooks());
 
 export const getBookDetails: RequestHandler<
-  typeof ROUTEMAP.books._params
+  Partial<typeof ROUTEMAP.books._params>
 > = async (req, res) => {
   const { id } = await idValidator.parseAsync(req.params);
   const book = await BookModel.getBookById(id);
@@ -23,7 +23,7 @@ export const getBookDetails: RequestHandler<
 };
 
 export const getBooksByAuthorId: RequestHandler<
-  typeof ROUTEMAP.books._params,
+  Partial<typeof ROUTEMAP.books._params>,
   Book[]
 > = async (req, res) => {
   const { authorId } = await authorIdValidator.parseAsync(req.params);

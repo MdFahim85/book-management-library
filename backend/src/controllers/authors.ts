@@ -23,7 +23,7 @@ export const getAuthors: RequestHandler<{}, Author[]> = async (
 };
 
 export const getAuthorById: RequestHandler<
-  typeof ROUTEMAP.authors._params,
+  Partial<typeof ROUTEMAP.authors._params>,
   Author
 > = async (req, res) => {
   const { id } = await idValidator.parseAsync(req.params);

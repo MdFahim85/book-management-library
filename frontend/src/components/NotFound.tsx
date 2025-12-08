@@ -1,4 +1,7 @@
 import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
+
+import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 function NotFound() {
   return (
@@ -6,8 +9,8 @@ function NotFound() {
       <h1 className="text-2xl text-red-400 font-semibold">
         ERROR 404 - Page not found
       </h1>
-      <Link to={"/"}>
-        <p className="pb border-b">Go to Homepage</p>
+      <Link to={Client_ROUTEMAP.books.root}>
+        <Button>Go to Homepage</Button>
       </Link>
     </div>
   );

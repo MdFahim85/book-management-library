@@ -31,7 +31,7 @@ function BooksByAuthor() {
   });
   const { data: author } = useSuspenseQuery({
     queryKey: [
-      Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.getByAuthorId,
+      Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.getById,
       authorId,
     ],
     queryFn: () =>

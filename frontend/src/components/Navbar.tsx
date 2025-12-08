@@ -1,22 +1,48 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "./ui/sidebar";
+import { Book, BookA, User } from "lucide-react";
 
-function Navbar() {
+export default function Navbar() {
   return (
-    <div className="flex justify-between items-center mb-10 pb-2 border-b border-neutral-600 ">
-      <Link to={"/"} className="text-2xl text-blue-500">
-        {" "}
-        Book Library
-      </Link>
-      <div className="flex gap-6">
-        <Link to={"/authors"} className="hover:underline">
-          Authors
-        </Link>
-        <Link to={"/books"} className="hover:underline">
-          Books
-        </Link>
-      </div>
-    </div>
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel className="my-4">
+            <Link to={"/books"} className="flex items-center">
+              <BookA className="me-2" /> Book Library Management
+            </Link>
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <Link to={"/books"}>
+                      <Book />
+                      <span>Books</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to={"/authors"}>
+                    <User />
+                    <span>Authors</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
   );
 }
-
-export default Navbar;
