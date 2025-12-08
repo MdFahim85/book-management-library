@@ -36,7 +36,7 @@ import Form from "./Form";
 
 import type { getAuthors } from "@backend/controllers/authors";
 import type { addBook } from "@backend/controllers/books";
-import type { GetReqBody, GetRes } from "@backend/types/req-res";
+import type { GetRes } from "@backend/types/req-res";
 
 export default function AddBookModal() {
   const queryClient = useQueryClient();
@@ -44,6 +44,7 @@ export default function AddBookModal() {
   const [modalOpen, setModalOpen] = useState(false);
   const [name, setName] = useState("");
   const [authorId, setAuthorId] = useState(-1);
+  const [bookPdf, setBookPdf] = useState<File | null>(null);
 
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
     queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
@@ -53,22 +54,28 @@ export default function AddBookModal() {
       ),
   });
   const { mutate: addNewBook, isPending: isAdding } = useMutation({
-    mutationFn: () =>
-      modifiedFetch<GetRes<typeof addBook>>(
+    mutationFn: () => {
+      const form = new FormData();
+      form.append("name", name);
+      form.append("authorId", authorId.toString());
+      if (bookPdf) form.append("bookPdf", bookPdf);
+
+      return modifiedFetch<GetRes<typeof addBook>>(
         Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.post,
         {
           method: "post",
-          body: JSON.stringify({ name, authorId } satisfies GetReqBody<
-            typeof addBook
-          >),
+          body: form,
         }
-      ),
+      );
+    },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
       });
       if (data) toast.success(data.message);
       setName("");
+      setAuthorId(-1);
+      setBookPdf(null);
       setModalOpen(false);
     },
     onError: (error) => {
@@ -108,7 +115,7 @@ export default function AddBookModal() {
                 onChange={({ target: { value } }) => setName(value)}
               />
             </div>
-            <div className="grid gap-3 mb-4">
+            <div className="grid gap-3">
               <Label htmlFor="author">Select an Author</Label>
               <Select
                 onValueChange={(value) => setAuthorId(parseInt(value))}
@@ -128,6 +135,18 @@ export default function AddBookModal() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid gap-3 mb-4">
+              <Label htmlFor="name">Upload a PDF</Label>
+              <Input
+                id="bookPdf"
+                name="bookPdf"
+                type="file"
+                accept="application/pdf"
+                onChange={({ target }) => {
+                  if (target.files?.[0]) setBookPdf(target.files[0]);
+                }}
+              />
             </div>
           </div>
           <DialogFooter>

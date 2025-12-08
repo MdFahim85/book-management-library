@@ -19,8 +19,11 @@ export async function modifiedFetch<T>(
     }
   );
 
-  // if (init.headers['content-type'] === 'multipart/form-data' || init.body instanceof FormData)
-  //   delete init.headers["content-type"]
+  if (
+    init.headers["content-type"] === "multipart/form-data" ||
+    init.body instanceof FormData
+  )
+    delete init.headers["content-type"];
 
   const { customBaseUrl } = init;
   delete init.customBaseUrl;

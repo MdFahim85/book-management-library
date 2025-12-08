@@ -1,6 +1,7 @@
 import { DrizzleError, DrizzleQueryError } from "drizzle-orm";
 import type { ErrorRequestHandler } from "express";
 import status from "http-status";
+import multer from "multer";
 import { ZodError } from "zod";
 
 import env from "../../config/env";
@@ -39,6 +40,9 @@ export const globalErrorHandler = ((err, _, res, __) => {
           .replaceAll("_", " ");
       error.statusCode = status.UNPROCESSABLE_ENTITY;
     }
+  } else if (err instanceof multer.MulterError) {
+    error.message = "Failed to upload the file";
+    error.statusCode = status.BAD_REQUEST;
   }
   if (res.headersSent) return console.log("Already Sent Response");
 
@@ -46,3 +50,16 @@ export const globalErrorHandler = ((err, _, res, __) => {
     .status(error.statusCode)
     .json({ message: error.message || status["500"] });
 }) as ErrorRequestHandler;
+
+import path from "path";
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(process.cwd(), "src", "uploads"));
+  },
+  filename: (_req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+export const upload = multer({ storage });

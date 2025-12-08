@@ -1,20 +1,19 @@
 import cors from "cors";
 import morgan from "morgan";
-import express, { ErrorRequestHandler, RequestHandler } from "express";
+import express from "express";
+import status from "http-status";
 
 import env from "./config/env";
 import router from "./routes";
-import { ZodError } from "zod";
 import ResponseError from "./utils/ResponseError";
-import status from "http-status";
-import { DrizzleError, DrizzleQueryError } from "drizzle-orm";
 import { globalErrorHandler } from "./controllers/_middlewares";
 
 const app = express();
 
 app.use(morgan("dev"));
-app.use(express.json());
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(router);
 
