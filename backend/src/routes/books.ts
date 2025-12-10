@@ -1,5 +1,6 @@
 import express from "express";
 
+import { upload } from "../controllers/_middlewares";
 import {
   addBook,
   deleteBook,
@@ -9,7 +10,6 @@ import {
   getBooksByAuthorId,
 } from "../controllers/books";
 import ROUTEMAP from "./ROUTEMAP";
-import { upload } from "../controllers/_middlewares";
 
 const booksRouter = express.Router();
 

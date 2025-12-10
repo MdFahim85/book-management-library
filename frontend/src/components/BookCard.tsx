@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trash } from "lucide-react";
+import { Download, Trash } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,7 +48,11 @@ function BookCard({ book }: { book: Book }) {
   return (
     <div className="w-full">
       <div className="flex items-center gap-4 w-full p-4 ">
-        <div className="font-semibold text-neutral-800 tracking-wide">
+        <div className="font-semibold text-neutral-800 tracking-wide flex gap-4">
+          <Download
+            size={20}
+            className="hover:text-emerald-400 transition-colors"
+          />
           {book.name.toUpperCase()}
         </div>
 

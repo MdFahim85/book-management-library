@@ -8,6 +8,20 @@
       "when": 1765096004415,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1765263493649,
+      "tag": "0001_flat_hitman",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1765264923920,
+      "tag": "0002_easy_hiroim",
+      "breakpoints": true
     }
   ]
 }

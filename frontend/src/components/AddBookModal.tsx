@@ -1,11 +1,10 @@
-import { useState } from "react";
-
 import {
   useMutation,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { Button } from "./ui/button";
 import {
@@ -36,14 +35,16 @@ import Form from "./Form";
 
 import type { getAuthors } from "@backend/controllers/authors";
 import type { addBook } from "@backend/controllers/books";
+import type { Book } from "@backend/models/Book";
 import type { GetRes } from "@backend/types/req-res";
+
+const initialBookState: Partial<Book> = { name: "", authorId: -1, fileUrl: "" };
 
 export default function AddBookModal() {
   const queryClient = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [name, setName] = useState("");
-  const [authorId, setAuthorId] = useState(-1);
+  const [book, setBook] = useState(initialBookState);
   const [bookPdf, setBookPdf] = useState<File | null>(null);
 
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
@@ -53,12 +54,16 @@ export default function AddBookModal() {
         Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get
       ),
   });
+
   const { mutate: addNewBook, isPending: isAdding } = useMutation({
-    mutationFn: () => {
+    mutationFn: async () => {
+      if (!bookPdf) {
+        toast.error("Please select a pdf");
+        return;
+      }
       const form = new FormData();
-      form.append("name", name);
-      form.append("authorId", authorId.toString());
-      if (bookPdf) form.append("bookPdf", bookPdf);
+      form.append("bookPdf", bookPdf);
+      form.append("json", JSON.stringify(book satisfies Partial<Book>));
 
       return modifiedFetch<GetRes<typeof addBook>>(
         Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.post,
@@ -73,16 +78,14 @@ export default function AddBookModal() {
         queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
       });
       if (data) toast.success(data.message);
-      setName("");
-      setAuthorId(-1);
+      setBook(initialBookState);
       setBookPdf(null);
       setModalOpen(false);
     },
-    onError: (error) => {
-      alert(error.message);
-    },
+    onError: (error) => toast.error(error.message),
     throwOnError: true,
   });
+
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
@@ -97,11 +100,7 @@ export default function AddBookModal() {
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
-        <Form
-          onSubmit={() => {
-            addNewBook();
-          }}
-        >
+        <Form onSubmit={() => addNewBook()}>
           <DialogHeader className="pb-4">
             <DialogTitle>Add a New Book</DialogTitle>
           </DialogHeader>
@@ -111,14 +110,18 @@ export default function AddBookModal() {
               <Input
                 id="name"
                 name="name"
-                value={name}
-                onChange={({ target: { value } }) => setName(value)}
+                value={book.name}
+                onChange={({ target: { value } }) =>
+                  setBook(() => ({ ...book, name: value }))
+                }
               />
             </div>
             <div className="grid gap-3">
               <Label htmlFor="author">Select an Author</Label>
               <Select
-                onValueChange={(value) => setAuthorId(parseInt(value))}
+                onValueChange={(value) =>
+                  setBook(() => ({ ...book, authorId: parseInt(value) }))
+                }
                 disabled={!authors.length}
               >
                 <SelectTrigger className="w-full">
@@ -157,7 +160,7 @@ export default function AddBookModal() {
             </DialogClose>
             <Button
               type="submit"
-              disabled={!name || authorId === -1 || isAdding}
+              disabled={initialBookState === book || isAdding}
             >
               {isAdding ? "Adding..." : "Add Book"}
             </Button>

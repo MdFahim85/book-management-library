@@ -36,14 +36,19 @@ import Form from "./Form";
 
 import type { getAuthors } from "@backend/controllers/authors";
 import type { editBook } from "@backend/controllers/books";
-import type { GetReqBody, GetRes } from "@backend/types/req-res";
+import type { GetRes } from "@backend/types/req-res";
 
 function EditBookModal({ book }: { book: Book }) {
+  const initialBookState: Partial<Book> = {
+    name: book.name,
+    authorId: book.authorId,
+    fileUrl: book.fileUrl,
+  };
   const queryClient = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [name, setName] = useState(book.name);
-  const [authorId, setAuthorId] = useState(book.authorId);
+  const [updatedBook, setUpdatedBook] = useState(initialBookState);
+  const [bookPdf, setBookPdf] = useState<File | null>(null);
 
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
     queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
@@ -54,8 +59,16 @@ function EditBookModal({ book }: { book: Book }) {
   });
 
   const { mutate: mutateEditBook, isPending: isEditing } = useMutation({
-    mutationFn: () =>
-      modifiedFetch<GetRes<typeof editBook>>(
+    mutationFn: async () => {
+      if (!bookPdf) {
+        toast.error("Please select a pdf");
+        return;
+      }
+      const form = new FormData();
+      form.append("bookPdf", bookPdf);
+      form.append("json", JSON.stringify(updatedBook satisfies Partial<Book>));
+
+      return modifiedFetch<GetRes<typeof editBook>>(
         Server_ROUTEMAP.books.root +
           Server_ROUTEMAP.books.put.replace(
             Server_ROUTEMAP.books._params.id,
@@ -63,21 +76,20 @@ function EditBookModal({ book }: { book: Book }) {
           ),
         {
           method: "put",
-          body: JSON.stringify({
-            name,
-            authorId,
-          } satisfies GetReqBody<typeof editBook>),
+          body: form,
         }
-      ),
+      );
+    },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
       });
       if (data) toast.success(data.message);
+      setUpdatedBook(initialBookState);
       setModalOpen(false);
     },
     onError: (error) => {
-      alert(error.message);
+      toast.error(error.message);
     },
     throwOnError: true,
   });
@@ -109,15 +121,22 @@ function EditBookModal({ book }: { book: Book }) {
               <Input
                 id="name"
                 name="name"
-                value={name}
-                onChange={({ target: { value } }) => setName(value)}
+                value={updatedBook.name}
+                onChange={({ target: { value } }) =>
+                  setUpdatedBook(() => ({ ...updatedBook, name: value }))
+                }
               />
             </div>
-            <div className="grid gap-3 mb-4">
+            <div className="grid gap-3">
               <Label htmlFor="author">Select an Author</Label>
               <Select
-                value={authorId.toString()}
-                onValueChange={(value) => setAuthorId(parseInt(value))}
+                value={updatedBook.authorId?.toString()}
+                onValueChange={(value) =>
+                  setUpdatedBook(() => ({
+                    ...updatedBook,
+                    authorId: parseInt(value),
+                  }))
+                }
                 disabled={!authors.length}
               >
                 <SelectTrigger className="w-full">
@@ -135,6 +154,18 @@ function EditBookModal({ book }: { book: Book }) {
                 </SelectContent>
               </Select>
             </div>
+            <div className="grid gap-3 mb-4">
+              <Label htmlFor="name">Upload a PDF</Label>
+              <Input
+                id="bookPdf"
+                name="bookPdf"
+                type="file"
+                accept="application/pdf"
+                onChange={({ target }) => {
+                  if (target.files?.[0]) setBookPdf(target.files[0]);
+                }}
+              />
+            </div>
           </div>
           <DialogFooter>
             <DialogClose asChild>
@@ -144,7 +175,7 @@ function EditBookModal({ book }: { book: Book }) {
             </DialogClose>
             <Button
               type="submit"
-              disabled={!name || authorId === -1 || isEditing}
+              disabled={initialBookState === updatedBook || isEditing}
             >
               {isEditing ? "Editing..." : "Edit Book"}
             </Button>

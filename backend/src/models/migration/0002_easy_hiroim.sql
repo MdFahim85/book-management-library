@@ -1,0 +1,1 @@
+ALTER TABLE "book" ALTER COLUMN "fileUrl" SET NOT NULL;

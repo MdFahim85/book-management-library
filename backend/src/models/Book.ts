@@ -1,5 +1,5 @@
 import { eq, InferSelectModel } from "drizzle-orm";
-import { integer, pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 
 import { db } from "../config/database";
@@ -13,16 +13,19 @@ export const book = pgTable("book", {
   authorId: integer("authorId")
     .notNull()
     .references(() => author.id),
+  fileUrl: text("fileUrl").notNull(),
 });
 
 // Book schema validators
 export const insertBookSchema = createInsertSchema(book, {
   name: (schema) => schema.min(3).max(255),
   authorId: () => z.coerce.number().int().gt(0),
+  fileUrl: () => z.string(),
 });
 export const updateBookSchema = createUpdateSchema(book, {
   name: (schema) => schema.min(3).max(255),
   authorId: () => z.coerce.number().int().gt(0),
+  fileUrl: () => z.string(),
 });
 
 // Book type
@@ -49,7 +52,7 @@ export default class BookModel {
   }
 
   static async addBook(
-    bookData: Pick<Book, "name" | "authorId">
+    bookData: Pick<Book, "name" | "authorId" | "fileUrl">
   ): Promise<Book | undefined> {
     const [newBook] = await db.insert(book).values(bookData).returning();
     if (!newBook) return undefined;
