@@ -19,11 +19,13 @@ booksRouter.get(ROUTEMAP.books.getById, getBookDetails);
 booksRouter.get(ROUTEMAP.books.getByAuthorId, getBooksByAuthorId);
 booksRouter.post(
   ROUTEMAP.books.post,
+
   upload.fields([{ name: "fileUrl" satisfies keyof Book }]),
   addBook
 );
 booksRouter.put(
   ROUTEMAP.books.put,
+
   upload.fields([{ name: "fileUrl" satisfies keyof Book }]),
   editBook
 );

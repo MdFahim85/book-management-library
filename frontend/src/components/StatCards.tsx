@@ -1,16 +1,17 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
+
 import { BookCopy, UserRoundPen } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 import { EMPTY_ARRAY } from "../misc";
-import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 
 import type { getAuthors } from "@backend/controllers/authors";
 import type { getBooks } from "@backend/controllers/books";
 import type { GetRes } from "@backend/types/req-res";
+import { Link } from "react-router-dom";
+import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 function StatCards() {
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
@@ -30,34 +31,54 @@ function StatCards() {
   });
 
   return (
-    <div className="grid grid-cols-12 gap-4 mt-4">
-      <Card className="col-span-6 text-center hover:bg-emerald-100 transition-colors">
-        <Link to={Client_ROUTEMAP.books.root}>
-          <CardHeader>
-            <CardTitle className="flex justify-center items-center gap-4">
-              <BookCopy />
-              Total Books
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-4xl font-bold">
-            {books.length}
-          </CardContent>
-        </Link>
-      </Card>
-      <Card className="col-span-6 text-center hover:bg-emerald-100 transition-colors">
-        <Link to={Client_ROUTEMAP.authors.root}>
-          <CardHeader>
-            <CardTitle className="flex justify-center items-center gap-4">
-              <UserRoundPen />
-              Total Author
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-4xl font-bold">
-            {authors.length}
-          </CardContent>
-        </Link>
-      </Card>
-    </div>
+    <Card className="mt-4">
+      <CardHeader>
+        <CardTitle>
+          <p className="text-2xl">Overview</p>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-12 gap-4 mt-4">
+          <Link
+            to={
+              Client_ROUTEMAP._ +
+              Client_ROUTEMAP.books.root +
+              Client_ROUTEMAP.books.index
+            }
+            className="col-span-6"
+          >
+            <Card className="text-center bg-blue-300 hover:bg-blue-400 transition-colors">
+              <CardHeader>
+                <CardTitle className="flex justify-center items-center gap-4">
+                  <BookCopy />
+                  Total Books
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-4xl font-bold">
+                {books.length}
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link
+            to={Client_ROUTEMAP.authors.root + Client_ROUTEMAP.authors.index}
+            className="col-span-6"
+          >
+            <Card className="text-center bg-emerald-300 hover:bg-emerald-400 transition-colors">
+              <CardHeader>
+                <CardTitle className="flex justify-center items-center gap-4">
+                  <UserRoundPen />
+                  Total Author
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-4xl font-bold">
+                {authors.length}
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

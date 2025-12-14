@@ -21,4 +21,4 @@ export const passwordChecker = async (
 ) => await bcrypt.compare(userPassword, dbPassword);
 
 export const generateAccessToken = (id: number) =>
-  jwt.sign({ id }, env.jwtSecret, { expiresIn: "5d" });
+  jwt.sign({ id } satisfies JwtToken, env.jwtSecret, { expiresIn: "5d" });

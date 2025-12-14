@@ -11,4 +11,9 @@ export default {
     index: "",
     authorBooks: "author/:authorId",
   },
+  auth: {
+    root: "/auth",
+    login: "login",
+    register: "register",
+  },
 } as const;

@@ -12,10 +12,15 @@ import { idValidator, userValidator } from "../utils/validators";
 import { generateAccessToken, passwordChecker, passwordHash } from "../utils";
 import { jwtToken } from "../config";
 
+// Get self
+export const getSelf: RequestHandler = (req, res) => {
+  res.send(req.user);
+};
+
 // User Login
 export const userLogin: RequestHandler<
   {},
-  { message: string; data: string },
+  { message: string },
   Partial<User>
 > = async (req, res) => {
   const { email, password } = await userValidator.parseAsync(req.body);
@@ -27,9 +32,13 @@ export const userLogin: RequestHandler<
   if (!match) throw new ResponseError("Wrong credentials", status.UNAUTHORIZED);
 
   const token = generateAccessToken(user.id);
-  res.cookie(jwtToken, token, { maxAge: 7 * 24 * 60 * 60 * 1000 });
+  res.cookie(jwtToken, token, {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    sameSite: "none",
+    secure: true,
+  });
 
-  res.json({ message: "Logged in successfully", data: token });
+  res.json({ message: "Logged in successfully" });
 };
 
 // User registration
@@ -49,7 +58,12 @@ export const userRegister: RequestHandler<
   if (!user) throw new ResponseError("User not added", status.BAD_REQUEST);
 
   const token = generateAccessToken(user.id);
-  res.cookie(jwtToken, token, { maxAge: 7 * 24 * 60 * 60 * 1000 });
+
+  res.cookie(jwtToken, token, {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    sameSite: "none",
+    secure: true,
+  });
 
   res.status(201).json({ message: "Registration Successfull" });
 };
@@ -57,20 +71,19 @@ export const userRegister: RequestHandler<
 // Update user
 export const editUser: RequestHandler<
   Partial<typeof ROUTEMAP.users._params>,
-  { message: string; data: User },
-  Partial<User> & { oldPassword: string }
+  { message: string },
+  Partial<User> & { oldPassword?: string }
 > = async (req, res) => {
   const { id } = await idValidator.parseAsync(req.params);
 
   const { oldPassword, ...userDetails } = req.body;
 
-  if (!oldPassword) {
-    throw new ResponseError("Provide old password", status.UNAUTHORIZED);
-  }
-
+  // Check if user exists
   const dbUser = await UserModel.getUserById(id);
+  if (!dbUser) throw new ResponseError("User not found", status.NOT_FOUND);
 
-  if (dbUser) {
+  // If old and new password is provided
+  if (oldPassword && userDetails.password) {
     const match = await passwordChecker(oldPassword, dbUser.password);
     if (!match) throw new ResponseError("Password doesnt match");
     if (oldPassword === userDetails.password)
@@ -80,6 +93,13 @@ export const editUser: RequestHandler<
       );
   }
 
+  // if new password not provided
+  if (!userDetails.password) {
+    userDetails.password = dbUser.password;
+  } else {
+    userDetails.password = await passwordHash(userDetails.password);
+  }
+
   const user = await UserModel.editUser(
     id,
     await updateUserSchema.parseAsync(userDetails)
@@ -87,7 +107,7 @@ export const editUser: RequestHandler<
   if (!user)
     throw new ResponseError("Failed to update the user", status.BAD_REQUEST);
 
-  res.json({ message: "User details has been updated", data: user });
+  res.json({ message: "User details has been updated" });
 };
 
 // Delete user

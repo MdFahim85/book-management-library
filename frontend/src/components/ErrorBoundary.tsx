@@ -33,7 +33,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     return (
       this.props.fallback ?? (
-        <div className="flex justify-center items-center min-h-screen min-w-screen">
+        <div className="flex justify-center items-center min-h-screen">
           <div className=" text-center p-6 flex flex-col grow">
             <h2 className="text-xl font-bold text-red-600">
               Something went wrong

@@ -5,6 +5,7 @@ import {
 } from "drizzle-orm/node-postgres";
 import { PgTransaction } from "drizzle-orm/pg-core";
 import { Pool } from "pg";
+import { User } from "../models/User";
 
 declare global {
   namespace NodeJS {
@@ -17,6 +18,13 @@ declare global {
 
       PORT?: string | undefined;
       JWT_SECRET: string;
+      FRONTEND_API: string;
+    }
+  }
+
+  namespace Express {
+    interface Request {
+      user?: User;
     }
   }
 
@@ -31,6 +39,8 @@ declare global {
       >;
 
   type InsertModel<T extends object & { id: number }> = Omit<T, "id">;
+
+  type JwtToken = { id: number; iat?: number };
 }
 
 export {};

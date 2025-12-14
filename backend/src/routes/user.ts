@@ -3,13 +3,16 @@ import express from "express";
 import {
   deleteUser,
   editUser,
+  getSelf,
   userLogin,
   userRegister,
 } from "../controllers/user";
 import ROUTEMAP from "./ROUTEMAP";
+import { authMiddleware } from "../controllers/_middlewares";
 
 const userRouter = express.Router();
 
+userRouter.get(ROUTEMAP.users.self, authMiddleware, getSelf);
 userRouter.post(ROUTEMAP.users.userLogin, userLogin);
 userRouter.post(ROUTEMAP.users.userRegister, userRegister);
 userRouter.put(ROUTEMAP.users.put, editUser);

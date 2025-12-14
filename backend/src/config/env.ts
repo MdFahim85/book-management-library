@@ -10,5 +10,6 @@ export default {
   dbUser: process.env.DB_USER,
   port: parseInt(process.env.PORT) || 3000,
   jwtSecret: process.env.JWT_SECRET,
+  frontend_API: process.env.FRONTEND_API,
   isProduction: process.env.NODE_ENV === "production",
 };

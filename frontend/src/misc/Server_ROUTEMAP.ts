@@ -24,6 +24,7 @@ export default {
   users: {
     _params: { id: ":id" },
     root: "/users",
+    self: "/self",
     userLogin: "/login",
     userRegister: "/register",
     put: "/:id",

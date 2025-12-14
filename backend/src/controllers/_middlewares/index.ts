@@ -3,7 +3,7 @@ import type { ErrorRequestHandler, RequestHandler } from "express";
 import status from "http-status";
 import jwt from "jsonwebtoken";
 import multer from "multer";
-import { ZodError, ZodJWT } from "zod";
+import z, { ZodError, ZodSchema } from "zod";
 
 import config from "../../config";
 import env from "../../config/env";
@@ -66,17 +66,37 @@ const storage = multer.diskStorage({
 export const upload = multer({ storage });
 
 export const authMiddleware: RequestHandler = async (req, _res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization)
-    throw new ResponseError("Authorization error", status.BAD_REQUEST);
+  const { token } = req.cookies;
+  if (!token) throw new ResponseError("No token provided", status.UNAUTHORIZED);
 
-  const token = authorization.split(" ")[1];
-  if (!token) throw new ResponseError("No token provided");
+  let verifiedToken: string | jwt.JwtPayload;
 
-  const verifiedToken = jwt.verify(token, env.jwtSecret);
+  try {
+    verifiedToken = jwt.verify(token, env.jwtSecret);
+  } catch (error) {
+    throw new ResponseError("Broken Token", status.UNAUTHORIZED);
+  }
 
   if (!verifiedToken)
     throw new ResponseError("Unauthorized access", status.UNAUTHORIZED);
 
+  const { id } = await jwtSchema.parseAsync(verifiedToken).catch((reason) => {
+    console.error(reason);
+
+    throw new ResponseError("Invalid Token", status.UNPROCESSABLE_ENTITY);
+  });
+
+  const user = await UserModel.getUserById(id);
+
+  if (!user) throw new ResponseError("Invalid User", status.NOT_FOUND);
+
+  // Not omitting password
+  req.user = user;
+
   next();
 };
+
+const jwtSchema = z.object({
+  id: z.number().int().min(1),
+  iat: z.number().int().optional(),
+} satisfies { [key in keyof JwtToken]: ZodSchema });

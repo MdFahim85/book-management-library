@@ -10,11 +10,8 @@ import ROUTEMAP from "../routes/ROUTEMAP";
 import { idValidator } from "../utils/validators";
 import ResponseError from "../utils/ResponseError";
 
-export const getAuthors: RequestHandler<{}, Author[]> = async (
-  _,
-  res,
-  next
-) => {
+export const getAuthors: RequestHandler<{}, Author[]> = async (_, res) => {
+  console.log(_.user);
   res.json(await AuthorModel.getAllAuthors());
 };
 

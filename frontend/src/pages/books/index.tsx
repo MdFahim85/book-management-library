@@ -29,6 +29,7 @@ import {
 
 import AddBookModal from "../../components/AddBookModal";
 import BookCard from "../../components/BookCard";
+import StatCards from "../../components/StatCards";
 import { EMPTY_ARRAY } from "../../misc";
 import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
 import { modifiedFetch } from "../../misc/modifiedFetch";
@@ -81,108 +82,114 @@ function Books() {
   });
 
   return (
-    <Card className="my-4">
-      <CardHeader>
-        <CardTitle className="text-4xl font-bold text-neutral-800 mb-6">
-          Books Management
-        </CardTitle>
-        <div className="flex items-center gap-4 justify-between me-4">
-          <div className="flex gap-4">
-            <Select
-              value={selectedAuthorId?.toString() || "NaN"}
-              onValueChange={(value) => setSelectedAuthorId(parseInt(value))}
-              disabled={!authors.length}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by author" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Author</SelectLabel>
-                  {[<SelectItem value="NaN">All</SelectItem>].concat(
-                    authors.map((author) => (
-                      <SelectItem value={author.id.toString()} key={author.id}>
-                        {author.name}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+    <>
+      <StatCards />
+      <Card className="my-4">
+        <CardHeader>
+          <CardTitle className="text-4xl font-bold text-neutral-800 mb-6">
+            Books Management
+          </CardTitle>
+          <div className="flex items-center gap-4 justify-between me-4">
+            <div className="flex gap-4">
+              <Select
+                value={selectedAuthorId?.toString() || "NaN"}
+                onValueChange={(value) => setSelectedAuthorId(parseInt(value))}
+                disabled={!authors.length}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by author" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Author</SelectLabel>
+                    {[<SelectItem value="NaN">All</SelectItem>].concat(
+                      authors.map((author) => (
+                        <SelectItem
+                          value={author.id.toString()}
+                          key={author.id}
+                        >
+                          {author.name}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
 
-            <Button
-              variant="ghost"
-              onClick={() => setSelectedAuthorId(undefined)}
-              disabled={!authors.length}
-            >
-              Clear
-            </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setSelectedAuthorId(undefined)}
+                disabled={!authors.length}
+              >
+                Clear
+              </Button>
+            </div>
+            <AddBookModal />
           </div>
-          <AddBookModal />
-        </div>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((book) => (
-                    <TableCell key={book.id}>
-                      <BookCard book={row.original} />
-                    </TableCell>
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
                   ))}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-red-400 text-xl"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <div className="flex items-center justify-center space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </CardHeader>
-    </Card>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((book) => (
+                      <TableCell key={book.id}>
+                        <BookCard book={row.original} />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center text-red-400 text-xl"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <div className="flex items-center justify-center space-x-2 py-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
+    </>
   );
 }
 

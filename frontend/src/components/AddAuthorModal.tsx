@@ -47,7 +47,7 @@ export default function AddAuthorModal() {
       setModalOpen(false);
     },
     onError: (error) => {
-      alert(error.message);
+      toast.error(error.message);
     },
     throwOnError: true,
   });

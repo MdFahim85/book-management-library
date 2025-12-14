@@ -12,7 +12,7 @@ import { globalErrorHandler } from "./controllers/_middlewares";
 const app = express();
 
 app.use(morgan("dev"));
-app.use(cors());
+app.use(cors({ origin: env.frontend_API, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

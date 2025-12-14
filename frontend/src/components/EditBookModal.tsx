@@ -56,12 +56,10 @@ function EditBookModal({ book }: { book: Book }) {
 
   const { mutate: mutateEditBook, isPending: isEditing } = useMutation({
     mutationFn: async () => {
-      if (!bookPdf) {
-        toast.error("Please select a pdf");
-        return;
-      }
       const form = new FormData();
-      form.append("fileUrl", bookPdf);
+      if (bookPdf) {
+        form.append("fileUrl", bookPdf);
+      }
       form.append(
         "json",
         JSON.stringify(updatedBook satisfies GetReqBody<typeof editBook>)

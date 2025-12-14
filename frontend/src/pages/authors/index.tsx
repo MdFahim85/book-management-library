@@ -19,6 +19,7 @@ import {
 
 import AddAuthorModal from "../../components/AddAuthorModal";
 import AuthorCard from "../../components/AuthorCard";
+import StatCards from "../../components/StatCards";
 import { EMPTY_ARRAY } from "../../misc";
 import { modifiedFetch } from "../../misc/modifiedFetch";
 import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
@@ -26,6 +27,7 @@ import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
 import type { getAuthors } from "@backend/controllers/authors";
 import type { Author } from "@backend/models/Author";
 import type { GetRes } from "@backend/types/req-res";
+
 
 const columns: ColumnDef<Author>[] = [
   {
@@ -51,80 +53,83 @@ function Authors() {
   });
 
   return (
-    <Card className="my-4">
-      <CardHeader>
-        <CardTitle className="text-4xl font-bold text-neutral-800 mb-6">
-          Author Management
-        </CardTitle>
-        <div className="flex items-center gap-4 justify-end me-4">
-          <AddAuthorModal />
-        </div>
+    <>
+      <StatCards />
+      <Card className="my-4">
+        <CardHeader>
+          <CardTitle className="text-4xl font-bold text-neutral-800 mb-6">
+            Author Management
+          </CardTitle>
+          <div className="flex items-center gap-4 justify-end me-4">
+            <AddAuthorModal />
+          </div>
 
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((author) => (
-                    <TableCell key={author.id}>
-                      <AuthorCard author={row.original} />
-                    </TableCell>
-                  ))}
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center text-red-400 text-xl"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <div className="flex items-center justify-center space-x-2 py-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
-      </CardHeader>
-    </Card>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((author) => (
+                      <TableCell key={author.id}>
+                        <AuthorCard author={row.original} />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center text-red-400 text-xl"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <div className="flex items-center justify-center space-x-2 py-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
+        </CardHeader>
+      </Card>
+    </>
   );
 }
 

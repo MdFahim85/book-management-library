@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Download, Trash } from "lucide-react";
+import toast from "react-hot-toast";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,9 +41,7 @@ function BookCard({ book }: { book: Book }) {
         queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
       });
     },
-    onError: (error) => {
-      alert(error.message);
-    },
+    onError: (error) => toast.error(error.message),
     throwOnError: true,
   });
 

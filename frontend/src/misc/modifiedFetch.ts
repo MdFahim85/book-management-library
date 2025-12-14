@@ -29,7 +29,10 @@ export async function modifiedFetch<T>(
   const { customBaseUrl } = init;
   delete init.customBaseUrl;
 
-  const res = await fetch((customBaseUrl || API_URL) + input, init);
+  const res = await fetch((customBaseUrl || API_URL) + input, {
+    ...init,
+    credentials: "include",
+  });
   const text = await res.text();
 
   const json: T = await JSON.parse(text, (_, value) => {
@@ -42,7 +45,12 @@ export async function modifiedFetch<T>(
     return value;
   });
 
-  if (!res.ok) throw { status: res.status, headers: res.headers, data: json };
+  if (!res.ok)
+    throw {
+      status: res.status,
+      headers: res.headers,
+      data: json,
+    };
 
   return json;
 }
