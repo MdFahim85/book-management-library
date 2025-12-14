@@ -13,7 +13,7 @@ import {
 } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
 
-import { modifiedFetch } from "../misc/modifiedFetch";
+import { API_URL, modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import EditBookModal from "./EditBookModal";
 
@@ -49,10 +49,15 @@ function BookCard({ book }: { book: Book }) {
     <div className="w-full">
       <div className="flex items-center gap-4 w-full p-4 ">
         <div className="font-semibold text-neutral-800 tracking-wide flex gap-4">
-          <Download
-            size={20}
-            className="hover:text-emerald-400 transition-colors"
-          />
+          <a
+            target="_blank"
+            href={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}
+          >
+            <Download
+              size={20}
+              className="hover:text-emerald-400 transition-colors"
+            />
+          </a>
           {book.name.toUpperCase()}
         </div>
 

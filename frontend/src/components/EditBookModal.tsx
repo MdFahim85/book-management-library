@@ -1,4 +1,3 @@
-import type { Book } from "@backend/models/Book";
 import {
   useMutation,
   useQueryClient,
@@ -7,6 +6,7 @@ import {
 import { Edit } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -36,18 +36,14 @@ import Form from "./Form";
 
 import type { getAuthors } from "@backend/controllers/authors";
 import type { editBook } from "@backend/controllers/books";
-import type { GetRes } from "@backend/types/req-res";
+import type { Book } from "@backend/models/Book";
+import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 function EditBookModal({ book }: { book: Book }) {
-  const initialBookState: Partial<Book> = {
-    name: book.name,
-    authorId: book.authorId,
-    fileUrl: book.fileUrl,
-  };
   const queryClient = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [updatedBook, setUpdatedBook] = useState(initialBookState);
+  const [updatedBook, setUpdatedBook] = useState(book);
   const [bookPdf, setBookPdf] = useState<File | null>(null);
 
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
@@ -65,8 +61,11 @@ function EditBookModal({ book }: { book: Book }) {
         return;
       }
       const form = new FormData();
-      form.append("bookPdf", bookPdf);
-      form.append("json", JSON.stringify(updatedBook satisfies Partial<Book>));
+      form.append("fileUrl", bookPdf);
+      form.append(
+        "json",
+        JSON.stringify(updatedBook satisfies GetReqBody<typeof editBook>)
+      );
 
       return modifiedFetch<GetRes<typeof editBook>>(
         Server_ROUTEMAP.books.root +
@@ -85,7 +84,7 @@ function EditBookModal({ book }: { book: Book }) {
         queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
       });
       if (data) toast.success(data.message);
-      setUpdatedBook(initialBookState);
+      setUpdatedBook(book);
       setModalOpen(false);
     },
     onError: (error) => {
@@ -175,7 +174,7 @@ function EditBookModal({ book }: { book: Book }) {
             </DialogClose>
             <Button
               type="submit"
-              disabled={initialBookState === updatedBook || isEditing}
+              disabled={updatedBook === updatedBook || isEditing}
             >
               {isEditing ? "Editing..." : "Edit Book"}
             </Button>

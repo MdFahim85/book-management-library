@@ -1,11 +1,14 @@
 import { DrizzleError, DrizzleQueryError } from "drizzle-orm";
-import type { ErrorRequestHandler } from "express";
+import type { ErrorRequestHandler, RequestHandler } from "express";
 import status from "http-status";
+import jwt from "jsonwebtoken";
 import multer from "multer";
-import { ZodError } from "zod";
+import { ZodError, ZodJWT } from "zod";
 
+import config from "../../config";
 import env from "../../config/env";
 import ResponseError from "../../utils/ResponseError";
+import UserModel from "../../models/User";
 
 export const globalErrorHandler = ((err, _, res, __) => {
   if (!env.isProduction)
@@ -51,15 +54,29 @@ export const globalErrorHandler = ((err, _, res, __) => {
     .json({ message: error.message || status["500"] });
 }) as ErrorRequestHandler;
 
-import path from "path";
-
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(process.cwd(), "public", "uploads"));
+  destination: (_, __, cb) => {
+    cb(null, config.uploadDir);
   },
-  filename: (_req, file, cb) => {
+  filename: (_, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
 export const upload = multer({ storage });
+
+export const authMiddleware: RequestHandler = async (req, _res, next) => {
+  const { authorization } = req.headers;
+  if (!authorization)
+    throw new ResponseError("Authorization error", status.BAD_REQUEST);
+
+  const token = authorization.split(" ")[1];
+  if (!token) throw new ResponseError("No token provided");
+
+  const verifiedToken = jwt.verify(token, env.jwtSecret);
+
+  if (!verifiedToken)
+    throw new ResponseError("Unauthorized access", status.UNAUTHORIZED);
+
+  next();
+};

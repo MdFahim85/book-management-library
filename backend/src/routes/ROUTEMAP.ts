@@ -1,4 +1,5 @@
 export default {
+  uploads: "/uploads",
   authors: {
     _params: { id: ":id" },
     root: "/authors",
@@ -15,6 +16,14 @@ export default {
     post: "/",
     getById: "/:id",
     getByAuthorId: "/author/:authorId",
+    put: "/:id",
+    delete: "/:id",
+  },
+  users: {
+    _params: { id: ":id" },
+    root: "/users",
+    userLogin: "/login",
+    userRegister: "/register",
     put: "/:id",
     delete: "/:id",
   },

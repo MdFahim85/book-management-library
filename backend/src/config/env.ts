@@ -9,5 +9,6 @@ export default {
   dbPassword: process.env.DB_PASSWORD,
   dbUser: process.env.DB_USER,
   port: parseInt(process.env.PORT) || 3000,
+  jwtSecret: process.env.JWT_SECRET,
   isProduction: process.env.NODE_ENV === "production",
 };

@@ -2,6 +2,7 @@ import cors from "cors";
 import morgan from "morgan";
 import express from "express";
 import status from "http-status";
+import cookieParser from "cookie-parser";
 
 import env from "./config/env";
 import router from "./routes";
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(morgan("dev"));
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

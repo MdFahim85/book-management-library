@@ -15,11 +15,7 @@ export const getAuthors: RequestHandler<{}, Author[]> = async (
   res,
   next
 ) => {
-  try {
-    res.json(await AuthorModel.getAllAuthors());
-  } catch (error) {
-    next(error);
-  }
+  res.json(await AuthorModel.getAllAuthors());
 };
 
 export const getAuthorById: RequestHandler<
@@ -55,7 +51,7 @@ export const editAuthor: RequestHandler<
     await updateAuthorSchema.parseAsync(req.body)
   );
   if (!author)
-    throw new ResponseError("Failed to update the book", status.BAD_REQUEST);
+    throw new ResponseError("Failed to update author", status.BAD_REQUEST);
   res.json({ message: "Author has been updated", data: author });
 };
 
@@ -63,5 +59,8 @@ export const deleteAuthor: RequestHandler<
   Partial<typeof ROUTEMAP.authors._params>
 > = async (req, res) => {
   const { id } = await idValidator.parseAsync(req.params);
-  res.json(await AuthorModel.deleteAuthor(id));
+  const deletedAuthor = await AuthorModel.deleteAuthor(id);
+  if (!deletedAuthor)
+    throw new ResponseError("Failed to delete author", status.BAD_REQUEST);
+  res.json(deletedAuthor);
 };

@@ -6,6 +6,7 @@ import {
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -29,6 +30,7 @@ import {
 } from "./ui/select";
 
 import { EMPTY_ARRAY } from "../misc";
+import { initialBookState } from "../misc/initialStates";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import Form from "./Form";
@@ -36,16 +38,14 @@ import Form from "./Form";
 import type { getAuthors } from "@backend/controllers/authors";
 import type { addBook } from "@backend/controllers/books";
 import type { Book } from "@backend/models/Book";
-import type { GetRes } from "@backend/types/req-res";
-
-const initialBookState: Partial<Book> = { name: "", authorId: -1, fileUrl: "" };
+import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function AddBookModal() {
   const queryClient = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [book, setBook] = useState(initialBookState);
-  const [bookPdf, setBookPdf] = useState<File | null>(null);
+  const [bookPdf, setBookPdf] = useState<File | null>(null); //
 
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
     queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
@@ -62,8 +62,11 @@ export default function AddBookModal() {
         return;
       }
       const form = new FormData();
-      form.append("bookPdf", bookPdf);
-      form.append("json", JSON.stringify(book satisfies Partial<Book>));
+      form.append("fileUrl" satisfies keyof Book, bookPdf);
+      form.append(
+        "json",
+        JSON.stringify(book satisfies GetReqBody<typeof addBook>)
+      );
 
       return modifiedFetch<GetRes<typeof addBook>>(
         Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.post,
@@ -79,12 +82,16 @@ export default function AddBookModal() {
       });
       if (data) toast.success(data.message);
       setBook(initialBookState);
-      setBookPdf(null);
       setModalOpen(false);
     },
     onError: (error) => toast.error(error.message),
     throwOnError: true,
   });
+
+  // const onInputChange: ChangeEventHandler<HTMLInputElement> = ({
+  //   target: { id, value, valueAsNumber },
+  // }) =>
+  //   setBook(() => ({ ...book, [id]: id === "date" ? valueAsNumber : value }));
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>

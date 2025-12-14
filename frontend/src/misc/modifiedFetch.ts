@@ -1,6 +1,7 @@
 import type { IncomingHttpHeaders } from "http";
 
-const API_URL = import.meta.env.VITE_BACKEND_ROOT || "http://localhost:3000";
+export const API_URL =
+  import.meta.env.VITE_BACKEND_ROOT || "http://localhost:3000";
 
 export async function modifiedFetch<T>(
   input: string | URL | Request,

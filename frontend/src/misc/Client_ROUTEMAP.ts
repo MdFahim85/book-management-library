@@ -1,4 +1,5 @@
 export default {
+  _: "/",
   authors: {
     _params: { id: ":id" },
     root: "/authors",

@@ -29,23 +29,22 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   render() {
-    if (this.state.hasError) {
-      return (
-        this.props.fallback ?? (
-          <div className="flex justify-center items-center min-h-screen min-w-screen">
-            <div className=" text-center p-6 flex flex-col grow">
-              <h2 className="text-xl font-bold text-red-600">
-                Something went wrong
-              </h2>
-              <p className="text-red-600">{this.state.error?.message}</p>
-              <Link to={Client_ROUTEMAP.books.root}>
-                <Button variant={"default"}>Go back to homepage</Button>
-              </Link>
-            </div>
+    if (!this.state.hasError) return this.props.children;
+
+    return (
+      this.props.fallback ?? (
+        <div className="flex justify-center items-center min-h-screen min-w-screen">
+          <div className=" text-center p-6 flex flex-col grow">
+            <h2 className="text-xl font-bold text-red-600">
+              Something went wrong
+            </h2>
+            <p className="text-red-600">{this.state.error?.message}</p>
+            <Link to={Client_ROUTEMAP._}>
+              <Button variant={"default"}>Go back to homepage</Button>
+            </Link>
           </div>
-        )
-      );
-    }
-    return this.props.children;
+        </div>
+      )
+    );
   }
 }

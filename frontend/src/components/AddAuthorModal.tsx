@@ -21,12 +21,13 @@ import Form from "./Form";
 
 import type { addAuthor } from "@backend/controllers/authors";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
+import { initialAuthorState } from "../misc/initialStates";
 
 export default function AddAuthorModal() {
   const queryClient = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [name, setName] = useState("");
+  const [author, setAuthor] = useState(initialAuthorState);
 
   const { mutate: addNewAuthor, isPending: isAdding } = useMutation({
     mutationFn: () =>
@@ -34,7 +35,7 @@ export default function AddAuthorModal() {
         Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.post,
         {
           method: "post",
-          body: JSON.stringify({ name } satisfies GetReqBody<typeof addAuthor>),
+          body: JSON.stringify(author satisfies GetReqBody<typeof addAuthor>),
         }
       ),
     onSuccess: (data) => {
@@ -42,7 +43,7 @@ export default function AddAuthorModal() {
         queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
       });
       if (data) toast.success(data.message);
-      setName("");
+      setAuthor(initialAuthorState);
       setModalOpen(false);
     },
     onError: (error) => {
@@ -78,8 +79,10 @@ export default function AddAuthorModal() {
               <Input
                 id="name"
                 name="name"
-                value={name}
-                onChange={({ target: { value } }) => setName(value)}
+                value={author.name}
+                onChange={({ target: { value } }) =>
+                  setAuthor(() => ({ ...author, name: value }))
+                }
               />
             </div>
           </div>
@@ -89,7 +92,10 @@ export default function AddAuthorModal() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={!name || isAdding}>
+            <Button
+              type="submit"
+              disabled={initialAuthorState === author || isAdding}
+            >
               {isAdding ? "Adding..." : "Add Author"}
             </Button>
           </DialogFooter>

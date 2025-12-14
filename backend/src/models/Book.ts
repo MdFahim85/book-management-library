@@ -1,10 +1,10 @@
 import { eq, InferSelectModel } from "drizzle-orm";
 import { integer, pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
+import z from "zod";
 
 import { db } from "../config/database";
 import { author } from "./Author";
-import z from "zod";
 
 // Book Schema
 export const book = pgTable("book", {
@@ -18,14 +18,14 @@ export const book = pgTable("book", {
 
 // Book schema validators
 export const insertBookSchema = createInsertSchema(book, {
+  id: (schema) => schema.transform(() => undefined),
   name: (schema) => schema.min(3).max(255),
   authorId: () => z.coerce.number().int().gt(0),
-  fileUrl: () => z.string(),
 });
 export const updateBookSchema = createUpdateSchema(book, {
+  id: (schema) => schema.transform(() => undefined),
   name: (schema) => schema.min(3).max(255),
   authorId: () => z.coerce.number().int().gt(0),
-  fileUrl: () => z.string(),
 });
 
 // Book type
@@ -33,46 +33,46 @@ export type Book = InferSelectModel<typeof book>;
 
 // Book Model
 export default class BookModel {
-  static async getAllBooks(): Promise<Book[]> {
-    const books = await db.select().from(book);
+  static getAllBooks = async (dbOrTx: DbOrTx = db) => {
+    const books = await dbOrTx.select().from(book);
     return books;
-  }
+  };
 
-  static async getBookById(id: number): Promise<Book | undefined> {
-    const books = await db.select().from(book).where(eq(book.id, id)).limit(1);
+  static getBookById = async (id: number, dbOrTx: DbOrTx = db) => {
+    const books = await dbOrTx
+      .select()
+      .from(book)
+      .where(eq(book.id, id))
+      .limit(1);
     return books[0];
-  }
+  };
 
-  static async getBooksByAuthorId(authorId: number): Promise<Book[]> {
-    const books = await db
+  static getBooksByAuthorId = async (authorId: number, dbOrTx: DbOrTx = db) => {
+    const books = await dbOrTx
       .select()
       .from(book)
       .where(eq(book.authorId, authorId));
     return books;
-  }
+  };
 
-  static async addBook(
-    bookData: Pick<Book, "name" | "authorId" | "fileUrl">
-  ): Promise<Book | undefined> {
-    const [newBook] = await db.insert(book).values(bookData).returning();
+  static addBook = async (bookData: InsertModel<Book>, dbOrTx: DbOrTx = db) => {
+    const [newBook] = await dbOrTx.insert(book).values(bookData).returning();
     if (!newBook) return undefined;
     return newBook satisfies Book;
-  }
-  static async editBook(
-    id: number,
-    bookData: Partial<Book>
-  ): Promise<Book | undefined> {
-    const [updatedBook] = await db
-      .update(book)
-      .set(bookData)
-      .where(eq(book.id, id))
-      .returning();
-    return updatedBook;
-  }
+  };
 
-  static async deleteBook(id: number): Promise<string | undefined> {
-    const result = await db.delete(book).where(eq(book.id, id)).returning();
-    if (!result.length) return undefined;
+  static editBook = async (
+    id: number,
+    bookData: Partial<Book>,
+    dbOrTx: DbOrTx = db
+  ) =>
+    (
+      await dbOrTx.update(book).set(bookData).where(eq(book.id, id)).returning()
+    )[0];
+
+  static deleteBook = async (id: number, dbOrTx: DbOrTx = db) => {
+    const result = await dbOrTx.delete(book).where(eq(book.id, id));
+    if (!result.rowCount) return undefined;
     return `Book with id ${id} deleted`;
-  }
+  };
 }

@@ -27,7 +27,7 @@ function EditAuthorModal({ author }: { author: Author }) {
   const queryClient = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [name, setName] = useState(author.name);
+  const [updatedAuthor, setUpdatedAuthor] = useState(author);
 
   const { mutate: mutateEditAuthor, isPending: isEditing } = useMutation({
     mutationFn: () =>
@@ -39,9 +39,9 @@ function EditAuthorModal({ author }: { author: Author }) {
           ),
         {
           method: "put",
-          body: JSON.stringify({
-            name,
-          } satisfies GetReqBody<typeof editAuthor>),
+          body: JSON.stringify(
+            updatedAuthor satisfies GetReqBody<typeof editAuthor>
+          ),
         }
       ),
     onSuccess: (data) => {
@@ -84,8 +84,10 @@ function EditAuthorModal({ author }: { author: Author }) {
               <Input
                 id="name"
                 name="name"
-                value={name}
-                onChange={({ target: { value } }) => setName(value)}
+                value={updatedAuthor.name}
+                onChange={({ target: { value } }) =>
+                  setUpdatedAuthor(() => ({ ...updatedAuthor, name: value }))
+                }
               />
             </div>
           </div>
@@ -95,7 +97,10 @@ function EditAuthorModal({ author }: { author: Author }) {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={!name || isEditing}>
+            <Button
+              type="submit"
+              disabled={updatedAuthor === author || isEditing}
+            >
               {isEditing ? "Editing..." : "Edit Author"}
             </Button>
           </DialogFooter>
