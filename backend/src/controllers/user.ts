@@ -13,8 +13,17 @@ import { generateAccessToken, passwordChecker, passwordHash } from "../utils";
 import { jwtToken } from "../config";
 
 // Get self
-export const getSelf: RequestHandler = (req, res) => {
+export const getSelf: RequestHandler<{}, User> = (req, res) => {
   res.send(req.user);
+};
+
+// User Logout
+export const userLogout: RequestHandler<{}, { message: string }> = async (
+  _,
+  res
+) => {
+  res.clearCookie(jwtToken);
+  res.json({ message: "Logged out successfully" });
 };
 
 // User Login

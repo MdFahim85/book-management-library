@@ -1,4 +1,5 @@
 import type { IncomingHttpHeaders } from "http";
+import ApiError from "./ApiError";
 
 export const API_URL =
   import.meta.env.VITE_BACKEND_ROOT || "http://localhost:3000";
@@ -45,12 +46,11 @@ export async function modifiedFetch<T>(
     return value;
   });
 
-  if (!res.ok)
-    throw {
-      status: res.status,
-      headers: res.headers,
-      data: json,
-    };
+  if (res.status === 401) {
+    return null;
+  }
+
+  if (!res.ok) throw new ApiError(json as { message: string }, res.status);
 
   return json;
 }

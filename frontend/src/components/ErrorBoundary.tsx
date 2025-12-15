@@ -1,8 +1,7 @@
 import { Component, type ReactNode } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
-import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
+import type ApiError from "../misc/ApiError";
 
 interface Props {
   children: ReactNode;
@@ -11,7 +10,7 @@ interface Props {
 
 interface State {
   hasError: boolean;
-  error: Error | null;
+  error: ApiError | null;
 }
 
 export default class ErrorBoundary extends Component<Props, State> {
@@ -33,15 +32,24 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     return (
       this.props.fallback ?? (
-        <div className="flex justify-center items-center min-h-screen">
-          <div className=" text-center p-6 flex flex-col grow">
-            <h2 className="text-xl font-bold text-red-600">
-              Something went wrong
-            </h2>
-            <p className="text-red-600">{this.state.error?.message}</p>
-            <Link to={Client_ROUTEMAP._}>
-              <Button variant={"default"}>Go back to homepage</Button>
-            </Link>
+        <div className="flex justify-center items-center min-h-10/12 w-full">
+          <div className="text-center p-6 flex flex-col grow gap-2">
+            <p className="font-bold text-xl text-red-600">
+              {this.state.error?.statusCode}
+            </p>
+            <p className="font-bold text-xl text-red-600">
+              {this.state.error?.message}
+            </p>
+            <div>
+              <Button
+                variant={"default"}
+                onClick={() => {
+                  window.location.reload();
+                }}
+              >
+                Go back
+              </Button>
+            </div>
           </div>
         </div>
       )

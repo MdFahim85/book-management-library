@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,6 +25,7 @@ import type { userLogin } from "@backend/controllers/user";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function Login() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const [user, setUser] = useState(initialUserLoginState);
@@ -41,6 +42,9 @@ export default function Login() {
     onSuccess: (data) => {
       if (data) toast.success(data.message);
       setUser(initialUserLoginState);
+      queryClient.invalidateQueries({
+        queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
+      });
       navigate(
         Client_ROUTEMAP._ +
           Client_ROUTEMAP.books.root +
@@ -50,11 +54,10 @@ export default function Login() {
     onError: (error) => {
       toast.error(error.message);
     },
-    throwOnError: true,
   });
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex justify-center items-center min-h-10/12">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Login in to your account</CardTitle>

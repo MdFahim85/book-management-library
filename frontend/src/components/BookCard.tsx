@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Download, Trash } from "lucide-react";
+import { EyeIcon, Trash } from "lucide-react";
 import toast from "react-hot-toast";
 
 import {
@@ -53,7 +53,7 @@ function BookCard({ book }: { book: Book }) {
             target="_blank"
             href={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}
           >
-            <Download
+            <EyeIcon
               size={20}
               className="hover:text-emerald-400 transition-colors"
             />
