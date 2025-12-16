@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { promises as fs } from "fs";
 import { status } from "http-status";
 
 import AuthorModel, {
@@ -6,9 +7,11 @@ import AuthorModel, {
   Author,
   updateAuthorSchema,
 } from "../models/Author";
+import BookModel from "../models/Book";
 import ROUTEMAP from "../routes/ROUTEMAP";
-import { idValidator } from "../utils/validators";
+import { fileExists } from "../utils";
 import ResponseError from "../utils/ResponseError";
+import { idValidator } from "../utils/validators";
 
 export const getAuthors: RequestHandler<{}, Author[]> = async (_, res) => {
   console.log(_.user);
@@ -56,6 +59,15 @@ export const deleteAuthor: RequestHandler<
   Partial<typeof ROUTEMAP.authors._params>
 > = async (req, res) => {
   const { id } = await idValidator.parseAsync(req.params);
+
+  const books = await BookModel.getBooksByAuthorId(id);
+
+  for (const book of books) {
+    if (book.fileUrl && (await fileExists(book.fileUrl))) {
+      await fs.unlink(book.fileUrl);
+    }
+  }
+
   const deletedAuthor = await AuthorModel.deleteAuthor(id);
   if (!deletedAuthor)
     throw new ResponseError("Failed to delete author", status.BAD_REQUEST);

@@ -14,11 +14,12 @@ export const initialAuthorState: Author = {
   name: "",
 };
 
-export const initialUserRegisterState: User = {
+export const initialUserRegisterState: User & { confirmPassword: string } = {
   id: -1,
   name: "",
   email: "",
   password: "",
+  confirmPassword: "",
 };
 
 export const initialUserLoginState: Pick<User, "email" | "password"> = {

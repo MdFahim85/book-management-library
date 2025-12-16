@@ -46,11 +46,7 @@ export async function modifiedFetch<T>(
     return value;
   });
 
-  if (res.status === 401) {
-    return null;
-  }
-
-  if (!res.ok) throw new ApiError(json as { message: string }, res.status);
+    if (!res.ok) throw new ApiError(json as { message: string }, res.status);
 
   return json;
 }

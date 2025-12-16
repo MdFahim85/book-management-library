@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Label } from "@radix-ui/react-label";
+import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -29,8 +30,14 @@ export default function Register() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(initialUserRegisterState);
+  const [showPass, setShowPass] = useState(false);
 
-  const { mutate: registerUser, isPending: isRegistering } = useMutation({
+  const {
+    mutate: registerUser,
+    isPending: isRegistering,
+    isError,
+    error,
+  } = useMutation({
     mutationFn: () =>
       modifiedFetch<GetRes<typeof userRegister>>(
         Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.userRegister,
@@ -71,18 +78,27 @@ export default function Register() {
           </CardAction>
         </CardHeader>
         <CardContent>
-          <Form onSubmit={() => registerUser()}>
+          <Form
+            onSubmit={() => {
+              if (user.password !== user.confirmPassword) {
+                toast.error("Passwords dont match");
+                return;
+              }
+              registerUser();
+            }}
+          >
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="email@example.com"
                   value={user.email}
                   onChange={({ target: { value } }) =>
                     setUser(() => ({ ...user, email: value }))
                   }
+                  className={`${isError ? "  border-red-500" : ""} `}
                   required
                 />
               </div>
@@ -96,6 +112,7 @@ export default function Register() {
                   onChange={({ target: { value } }) =>
                     setUser(() => ({ ...user, name: value }))
                   }
+                  className={`${isError ? "  border-red-500" : ""} `}
                   required
                 />
               </div>
@@ -103,18 +120,50 @@ export default function Register() {
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPass ? "text" : "password"}
+                    placeholder="********"
+                    required
+                    value={user.password}
+                    onChange={({ target: { value } }) =>
+                      setUser(() => ({ ...user, password: value }))
+                    }
+                    className={`${isError ? "  border-red-500" : ""} `}
+                  />
+                  <Button
+                    variant={"ghost"}
+                    type="button"
+                    className="absolute right-0 hover:bg-transparent cursor-progress"
+                    onClick={() => setShowPass((val) => !val)}
+                  >
+                    {showPass ? <Eye /> : <EyeClosed />}
+                  </Button>
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                </div>
                 <Input
-                  id="password"
+                  id="confirmPassword"
                   type="password"
                   placeholder="********"
                   required
-                  value={user.password}
+                  value={user.confirmPassword}
                   onChange={({ target: { value } }) =>
-                    setUser(() => ({ ...user, password: value }))
+                    setUser(() => ({ ...user, confirmPassword: value }))
                   }
+                  className={`${isError ? "  border-red-500" : ""} `}
                 />
               </div>
             </div>
+            {isError && (
+              <div className="text-center text-red-500 pt-4">
+                {error.message}
+              </div>
+            )}
             <div className="mt-8">
               <Button
                 type="submit"

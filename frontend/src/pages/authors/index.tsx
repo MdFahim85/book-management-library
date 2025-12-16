@@ -28,7 +28,6 @@ import type { getAuthors } from "@backend/controllers/authors";
 import type { Author } from "@backend/models/Author";
 import type { GetRes } from "@backend/types/req-res";
 
-
 const columns: ColumnDef<Author>[] = [
   {
     accessorKey: "name",

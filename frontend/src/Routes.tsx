@@ -2,13 +2,13 @@ import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import "./App.css";
-import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingPage from "./components/Loading";
 import NotFound from "./components/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Redirect from "./components/Redirect";
 import Client_ROUTEMAP from "./misc/Client_ROUTEMAP";
 import PublicRoute from "./components/PublicRoute";
+import ErrorBoundaryWithRouter from "./components/ErrorBoundary";
 
 const AuthorsLazy = lazy(() => import("./pages/authors/index"));
 const BooksLazy = lazy(() => import("./pages/books/index"));
@@ -17,7 +17,7 @@ const LoginLazy = lazy(() => import("./pages/auth/login"));
 const BooksByAuthorLazy = lazy(() => import("./components/BooksByAuthor"));
 
 const RouteComponent = () => (
-  <ErrorBoundary>
+  <ErrorBoundaryWithRouter>
     <Suspense fallback={<LoadingPage />}>
       <Routes>
         <Route
@@ -85,7 +85,7 @@ const RouteComponent = () => (
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
-  </ErrorBoundary>
+  </ErrorBoundaryWithRouter>
 );
 
 export default RouteComponent;

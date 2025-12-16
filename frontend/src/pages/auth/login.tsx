@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 
 import { Label } from "@radix-ui/react-label";
+import { Eye, EyeClosed } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -29,8 +30,14 @@ export default function Login() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(initialUserLoginState);
+  const [showPass, setShowPass] = useState(false);
 
-  const { mutate: loginUser, isPending: isLogginIn } = useMutation({
+  const {
+    mutate: loginUser,
+    isPending: isLogginIn,
+    isError,
+    error,
+  } = useMutation({
     mutationFn: () =>
       modifiedFetch<GetRes<typeof userLogin>>(
         Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.userLogin,
@@ -82,11 +89,12 @@ export default function Login() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="m@example.com"
+                  placeholder="email@example.com"
                   value={user.email}
                   onChange={({ target: { value } }) =>
                     setUser(() => ({ ...user, email: value }))
                   }
+                  className={`${isError ? "  border-red-500" : ""} `}
                   required
                 />
               </div>
@@ -95,19 +103,35 @@ export default function Login() {
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="********"
-                  required
-                  value={user.password}
-                  onChange={({ target: { value } }) =>
-                    setUser(() => ({ ...user, password: value }))
-                  }
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPass ? "text" : "password"}
+                    placeholder="********"
+                    required
+                    value={user.password}
+                    onChange={({ target: { value } }) =>
+                      setUser(() => ({ ...user, password: value }))
+                    }
+                    className={`${isError ? "  border-red-500" : ""} `}
+                  />
+                  <Button
+                    variant={"ghost"}
+                    type="button"
+                    className="absolute right-0 hover:bg-transparent cursor-progress"
+                    onClick={() => setShowPass((val) => !val)}
+                  >
+                    {showPass ? <Eye /> : <EyeClosed />}
+                  </Button>
+                </div>
               </div>
             </div>
-            <div className="mt-8">
+            {isError && (
+              <div className="text-center text-red-500 pt-4">
+                {error.message}
+              </div>
+            )}
+            <div className="mt-4">
               <Button
                 type="submit"
                 className="w-full"

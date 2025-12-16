@@ -84,7 +84,9 @@ export default function AddBookModal() {
       setBook(initialBookState);
       setModalOpen(false);
     },
-    onError: (error) => toast.error(error.message),
+    onError: (error) => {
+      toast.error(error.message);
+    },
     throwOnError: true,
   });
 
@@ -167,7 +169,9 @@ export default function AddBookModal() {
             </DialogClose>
             <Button
               type="submit"
-              disabled={initialBookState === book || isAdding}
+              disabled={
+                initialBookState === book || isAdding || !authors.length
+              }
             >
               {isAdding ? "Adding..." : "Add Book"}
             </Button>

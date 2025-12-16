@@ -172,7 +172,7 @@ function EditBookModal({ book }: { book: Book }) {
             </DialogClose>
             <Button
               type="submit"
-              disabled={updatedBook === updatedBook || isEditing}
+              disabled={updatedBook === book || isEditing || !authors.length  }
             >
               {isEditing ? "Editing..." : "Edit Book"}
             </Button>

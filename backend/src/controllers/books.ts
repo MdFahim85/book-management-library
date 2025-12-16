@@ -52,7 +52,7 @@ export const addBook: RequestHandler<
     throw new ResponseError("Please attach a pdf", status.BAD_REQUEST);
 
   const json: Book = JSON.parse(req.body.json || "");
-  json.fileUrl = fileUrl[0].filename;
+  json.fileUrl = fileUrl[0].path;
 
   const book = await db.transaction(async (tx) => {
     const result = await BookModel.addBook(
@@ -83,7 +83,11 @@ export const editBook: RequestHandler<
 
   const json: Book = JSON.parse(req.body.json || "");
 
-  if (fileUrl?.[0]) json.fileUrl = fileUrl[0].filename;
+  const newFilePath = fileUrl?.[0]?.path;
+
+  if (fileUrl?.[0]?.size && newFilePath) {
+    json.fileUrl = newFilePath;
+  }
 
   const oldBook = await BookModel.getBookById(id);
   if (!oldBook) throw new ResponseError("Book not found", status.NOT_FOUND);
@@ -95,12 +99,15 @@ export const editBook: RequestHandler<
       tx
     );
     if (!result) {
-      if (await fileExists(fileUrl![0]!.path))
-        await fs.unlink(fileUrl![0]!.path);
+      if (newFilePath && (await fileExists(newFilePath))) {
+        await fs.unlink(newFilePath);
+      }
       tx.rollback();
       throw new ResponseError("Failed to update the book", status.BAD_REQUEST);
     }
-    if (await fileExists(oldBook.fileUrl)) await fs.unlink(oldBook.fileUrl);
+    if (newFilePath && oldBook.fileUrl && (await fileExists(oldBook.fileUrl))) {
+      await fs.unlink(oldBook.fileUrl);
+    }
 
     return result;
   });

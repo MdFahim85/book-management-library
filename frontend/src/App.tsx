@@ -3,19 +3,20 @@ import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 
 import "./App.css";
-import ErrorBoundary from "./components/ErrorBoundary";
 import LoadingPage from "./components/Loading";
+import Navbar from "./components/Navbar";
 import SideBar from "./components/SideBar";
 import { SidebarProvider } from "./components/ui/sidebar";
 import RouteComponent from "./Routes";
-import Navbar from "./components/Navbar";
+import ErrorBoundaryWithRouter from "./components/ErrorBoundary";
 
 function App() {
   const queryClient = new QueryClient();
+
   return (
     <QueryClientProvider client={queryClient}>
       <SidebarProvider>
-        <ErrorBoundary>
+        <ErrorBoundaryWithRouter>
           <Suspense fallback={<LoadingPage />}>
             <div className="min-w-3/12">
               <SideBar />
@@ -24,10 +25,9 @@ function App() {
               <Navbar />
               <RouteComponent />
             </div>
-
             <Toaster position="top-right" reverseOrder={false} />
           </Suspense>
-        </ErrorBoundary>
+        </ErrorBoundaryWithRouter>
       </SidebarProvider>
     </QueryClientProvider>
   );

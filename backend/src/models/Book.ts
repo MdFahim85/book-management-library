@@ -12,7 +12,7 @@ export const book = pgTable("book", {
   name: varchar("name", { length: 255 }).notNull(),
   authorId: integer("authorId")
     .notNull()
-    .references(() => author.id),
+    .references(() => author.id, { onDelete: "cascade" }),
   fileUrl: text("fileUrl").notNull(),
 });
 

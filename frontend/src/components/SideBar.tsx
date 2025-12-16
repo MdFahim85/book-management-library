@@ -40,8 +40,10 @@ export default function SideBar() {
                       Client_ROUTEMAP.books.index
                     }
                   >
-                    <Book />
-                    <span>Books</span>
+                    <div className="flex items-center text-xl gap-4">
+                      <Book />
+                      <span>Books</span>
+                    </div>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -54,8 +56,10 @@ export default function SideBar() {
                       Client_ROUTEMAP.authors.index
                     }
                   >
-                    <User />
-                    <span>Authors</span>
+                    <div className="flex items-center text-xl gap-4">
+                      <User />
+                      <span>Authors</span>
+                    </div>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

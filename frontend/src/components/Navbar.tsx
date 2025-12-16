@@ -1,19 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { LogInIcon, LogOut } from "lucide-react";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
+
+import { Button } from "./ui/button";
 
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 import type { getSelf, userLogout } from "@backend/controllers/user";
 import type { GetRes } from "@backend/types/req-res";
-import { LogInIcon, LogOut } from "lucide-react";
-import toast from "react-hot-toast";
-
-import { Button } from "./ui/button";
-import { Link } from "react-router-dom";
-import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 export default function Navbar() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: user } = useQuery({
     queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
@@ -34,9 +35,11 @@ export default function Navbar() {
       ),
     onSuccess: (data) => {
       if (data) toast.success(data.message);
-      queryClient.invalidateQueries({
-        queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
-      });
+      queryClient.setQueryData(
+        [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
+        null
+      );
+      navigate(Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.login);
     },
     onError: (error) => {
       toast.error(error.message);

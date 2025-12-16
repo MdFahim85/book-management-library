@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Trash } from "lucide-react";
+import toast from "react-hot-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,9 +39,12 @@ function AuthorCard({ author }: { author: Author }) {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
       });
+      queryClient.invalidateQueries({
+        queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
+      });
     },
     onError: (error) => {
-      alert(error.message);
+      toast.error(error.message);
     },
     throwOnError: true,
   });
