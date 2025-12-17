@@ -26,21 +26,15 @@ export default function SideBar() {
               className="flex items-center "
             >
               <BookA className="me-2" />{" "}
-              <p className="text-2xl">Book Library Management</p>
+              <p className="text-xl">Book Library Management</p>
             </Link>
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link
-                    to={
-                      Client_ROUTEMAP.books.root +
-                      "/" +
-                      Client_ROUTEMAP.books.index
-                    }
-                  >
-                    <div className="flex items-center text-xl gap-4">
+                  <Link to={Client_ROUTEMAP.books.root}>
+                    <div className="flex items-center text-lg gap-4">
                       <Book />
                       <span>Books</span>
                     </div>
@@ -49,14 +43,8 @@ export default function SideBar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link
-                    to={
-                      Client_ROUTEMAP.authors.root +
-                      "/" +
-                      Client_ROUTEMAP.authors.index
-                    }
-                  >
-                    <div className="flex items-center text-xl gap-4">
+                  <Link to={Client_ROUTEMAP.authors.root}>
+                    <div className="flex items-center text-lg gap-4">
                       <User />
                       <span>Authors</span>
                     </div>

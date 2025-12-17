@@ -22,7 +22,11 @@ const RouteComponent = () => (
       <Routes>
         <Route
           path={Client_ROUTEMAP._}
-          element={<Redirect to={Client_ROUTEMAP.books.root} />}
+          element={
+            <Redirect
+              to={Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.login}
+            />
+          }
         />
 
         <Route path={Client_ROUTEMAP.auth.root}>

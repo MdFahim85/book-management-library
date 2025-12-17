@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Label } from "@radix-ui/react-label";
 import { Eye, EyeClosed } from "lucide-react";
@@ -28,6 +28,7 @@ import type { GetReqBody, GetRes } from "@backend/types/req-res";
 export default function Login() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [user, setUser] = useState(initialUserLoginState);
   const [showPass, setShowPass] = useState(false);
@@ -53,9 +54,11 @@ export default function Login() {
         queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
       });
       navigate(
-        Client_ROUTEMAP._ +
-          Client_ROUTEMAP.books.root +
-          Client_ROUTEMAP.books.index
+        location.state
+          ? location.state.from
+          : Client_ROUTEMAP._ +
+              Client_ROUTEMAP.books.root +
+              Client_ROUTEMAP.books.index
       );
     },
     onError: (error) => {

@@ -22,8 +22,6 @@ function StatCards() {
     ? "authors"
     : "books";
 
-  console.log(active, location);
-
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
     queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
     queryFn: () =>
