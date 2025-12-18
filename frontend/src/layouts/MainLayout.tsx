@@ -6,12 +6,12 @@ export default function MainLayout() {
   const { user } = useUserContext();
 
   return (
-    <div className="grid grid-cols-12 w-full min-h-screen bg-neutral-200">
-      <div className={`col-span-2 ${!user && "hidden"}`}>
+    <div className="grid grid-cols-12 w-full min-h-screen bg-neutral-200 dark:bg-neutral-950">
+      <div className={`col-span-3 ${!user && "hidden"}`}>
         <SideBar />
       </div>
       <div
-        className={`${user ? "col-span-10" : "col-span-12"} px-5 xl:px-10 py-4`}
+        className={`${user ? "col-span-9" : "col-span-12"} px-5 xl:px-10 py-4`}
       >
         <RouteComponent />
       </div>

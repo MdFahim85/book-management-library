@@ -5,7 +5,7 @@ import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 function NotFound() {
   return (
-    <div className="flex flex-col justify-center items-center gap-6 min-h-10/12 w-full">
+    <div className="flex flex-col justify-center items-center gap-6 h-full w-full">
       <h1 className="text-2xl text-red-400 font-semibold">
         ERROR 404 - Page not found
       </h1>

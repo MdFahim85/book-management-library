@@ -53,7 +53,7 @@ function AuthorCard({ author }: { author: Author }) {
     <div className="w-full">
       <div className="flex items-center gap-4 w-full p-4">
         <div>
-          <p className="font-semibold text-neutral-800 tracking-wide">
+          <p className="font-semibold text-neutral-800 dark:text-neutral-100 tracking-wide">
             {author.name}
           </p>
         </div>

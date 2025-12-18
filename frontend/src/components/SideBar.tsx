@@ -13,6 +13,7 @@ import type { userLogout } from "@backend/controllers/user";
 import type { GetRes } from "@backend/types/req-res";
 import LoadingPage from "./Loading";
 import EditUserModal from "./EditUserModal";
+import { ModeToggle } from "./ModeToggle";
 
 export default function SideBar() {
   const queryClient = useQueryClient();
@@ -48,7 +49,7 @@ export default function SideBar() {
   return (
     <aside className="h-full bg-background border-r border-border flex flex-col justify-between pb-4">
       <div>
-        <div className="p-6">
+        <div className="p-6 flex justify-between">
           <Link
             to="/books"
             className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
@@ -56,6 +57,7 @@ export default function SideBar() {
             <BookA className="w-6 h-6" />
             <h1 className="text-lg font-semibold">Book Library Management</h1>
           </Link>
+          <ModeToggle />
         </div>
 
         <nav className="px-3 mt-8">
@@ -83,21 +85,23 @@ export default function SideBar() {
       </div>
 
       {user && (
-        <div className="flex justify-between items-center px-3">
-          <div>
-            <EditUserModal />
+        <>
+          <div className="flex justify-between items-center px-3">
+            <div>
+              <EditUserModal />
+            </div>
+            <div>
+              <Button
+                variant={"destructive"}
+                onClick={() => logOut()}
+                disabled={isLoggingOut}
+              >
+                <LogOut />
+                Logout
+              </Button>
+            </div>
           </div>
-          <div>
-            <Button
-              variant={"destructive"}
-              onClick={() => logOut()}
-              disabled={isLoggingOut}
-            >
-              <LogOut />
-              Logout
-            </Button>
-          </div>
-        </div>
+        </>
       )}
     </aside>
   );

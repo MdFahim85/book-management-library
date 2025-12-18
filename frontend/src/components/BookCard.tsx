@@ -48,7 +48,7 @@ function BookCard({ book }: { book: Book }) {
   return (
     <div className="w-full">
       <div className="flex items-center gap-4 w-full p-4 ">
-        <div className="font-semibold text-neutral-800 tracking-wide flex gap-4">
+        <div className="font-semibold text-neutral-800 dark:text-neutral-100 tracking-wide flex gap-4">
           <a
             target="_blank"
             href={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}
@@ -91,7 +91,6 @@ function BookCard({ book }: { book: Book }) {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-          ;
         </div>
       </div>
     </div>

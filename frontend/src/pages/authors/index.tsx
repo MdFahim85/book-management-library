@@ -56,7 +56,7 @@ function Authors() {
       <StatCards />
       <Card className="my-4">
         <CardHeader>
-          <CardTitle className="text-4xl font-bold text-neutral-800 mb-6">
+          <CardTitle className="text-4xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">
             Author Management
           </CardTitle>
           <div className="flex items-center gap-4 justify-end me-4">

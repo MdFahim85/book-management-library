@@ -56,14 +56,16 @@ function StatCards() {
             className="col-span-6"
           >
             <Card
-              className={`text-center bg-blue-200 hover:bg-blue-400 transition-colors ${
-                active == "books" && "bg-blue-400"
+              className={`text-center bg-blue-200   hover:bg-blue-400 dark:bg-blue-400 dark:hover:bg-blue-500 transition-colors ${
+                active == "books" && "bg-blue-400 dark:bg-blue-500"
               }`}
             >
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div className="grid gap-4 ">
-                    <p className="text-xl text-neutral-800">Total Books</p>
+                    <p className="text-xl text-neutral-800 dark:text-neutral-100">
+                      Total Books
+                    </p>
                     <p className="text-4xl font-bold"> {books.length}</p>
                   </div>
 
@@ -78,14 +80,16 @@ function StatCards() {
             className="col-span-6"
           >
             <Card
-              className={`text-center bg-emerald-200 hover:bg-emerald-400 transition-colors ${
-                active == "authors" && "bg-emerald-400"
+              className={`text-center bg-emerald-200 hover:bg-emerald-400 dark:bg-emerald-400 dark:hover:bg-emerald-500 transition-colors ${
+                active == "authors" && "bg-emerald-400 dark:bg-emerald-500"
               }`}
             >
               <CardContent>
                 <div className="flex items-center justify-between">
                   <div className="grid gap-4 ">
-                    <p className="text-xl text-neutral-800">Total Authors</p>
+                    <p className="text-xl text-neutral-800 dark:text-neutral-100">
+                      Total Authors
+                    </p>
                     <p className="text-4xl font-bold"> {authors.length}</p>
                   </div>
 
