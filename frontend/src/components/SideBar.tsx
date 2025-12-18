@@ -20,9 +20,7 @@ export default function SideBar() {
         <SidebarGroup>
           <SidebarGroupLabel className="mt-4 mb-10">
             <Link
-              to={
-                Client_ROUTEMAP.books.root + "/" + Client_ROUTEMAP.books.index
-              }
+              to={Client_ROUTEMAP.books.root}
               className="flex items-center "
             >
               <BookA className="me-2" />{" "}
@@ -33,7 +31,7 @@ export default function SideBar() {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link to={Client_ROUTEMAP.books.root}>
+                  <Link to={Client_ROUTEMAP._ + Client_ROUTEMAP.books.root}>
                     <div className="flex items-center text-lg gap-4">
                       <Book />
                       <span>Books</span>

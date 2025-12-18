@@ -25,11 +25,13 @@ export type Author = InferSelectModel<typeof author>;
 
 // Author Model
 export default class AuthorModel {
+  // Get all authors
   static getAllAuthors = async () => {
     const authors = await db.select().from(author);
     return authors;
   };
 
+  // Get author by id
   static getAuthorById = async (id: number) => {
     const authors = await db
       .select()
@@ -39,12 +41,14 @@ export default class AuthorModel {
     return authors[0];
   };
 
+  // Add a new author
   static addAuthor = async (authorData: InsertModel<Author>) => {
     const [newAuthor] = await db.insert(author).values(authorData).returning();
     if (!newAuthor) return undefined;
     return newAuthor satisfies Author;
   };
 
+  // Edit author
   static editAuthor = async (id: number, authorData: Partial<Author>) =>
     (
       await db
@@ -54,6 +58,7 @@ export default class AuthorModel {
         .returning()
     )[0];
 
+  // Delete author
   static deleteAuthor = async (id: number) => {
     const result = await db.delete(author).where(eq(author.id, id));
     if (!result.rowCount) return undefined;

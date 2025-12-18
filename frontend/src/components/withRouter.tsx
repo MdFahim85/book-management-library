@@ -1,4 +1,3 @@
-// withRouter.tsx
 import type { ComponentType } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 

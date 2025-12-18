@@ -1,40 +1,46 @@
-import { useQuery } from "@tanstack/react-query";
-import type { JSX } from "react";
+import { type FC, type PropsWithChildren } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
-import { modifiedFetch } from "../misc/modifiedFetch";
-import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import { useUserContext } from "../contexts/UserContext";
 import LoadingPage from "./Loading";
 
-import type { getSelf } from "@backend/controllers/user";
-import type { GetRes } from "@backend/types/req-res";
-
-export default function ProtectedRoute({
-  children,
-}: {
-  children: JSX.Element;
-}) {
+const ProtectedRoute: FC<
+  PropsWithChildren<{
+    allowLoggedInOnly?: boolean;
+    allowLoggedOutOnly?: boolean;
+  }>
+> = ({ children, allowLoggedInOnly, allowLoggedOutOnly }) => {
   const location = useLocation();
-  const { data: user, isLoading } = useQuery({
-    queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
-    queryFn: () =>
-      modifiedFetch<GetRes<typeof getSelf>>(
-        Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self
-      ),
-    retry: false,
-  });
 
-  if (isLoading) return <LoadingPage />;
+  const { user, isLoading } = useUserContext();
 
-  if (!user)
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
+  if (!user && allowLoggedInOnly)
     return (
       <Navigate
         to={Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.login}
+        state={{ from: location.pathname + location.search }}
         replace
-        state={{ from: location.pathname }}
       />
     );
 
+  if (user && allowLoggedOutOnly) {
+    return <Navigate to={location.state?.from ?? Client_ROUTEMAP._} replace />;
+  }
+
   return children;
-}
+};
+
+export default ProtectedRoute;
+
+/**
+ * Protected Route -> allowLoggedInOnly, allowLoggedOutOnly
+ *
+ * if already logged in, current route is for logged out only, redirect
+ * if not logged in, current route is for logged in only, redirect with prev location
+ * if currently being logged in, wait
+ */

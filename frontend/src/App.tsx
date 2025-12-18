@@ -3,12 +3,14 @@ import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 
 import "./App.css";
+import ErrorBoundaryWithRouter from "./components/ErrorBoundary";
 import LoadingPage from "./components/Loading";
-import Navbar from "./components/Navbar";
-import SideBar from "./components/SideBar";
+
 import { SidebarProvider } from "./components/ui/sidebar";
 import RouteComponent from "./Routes";
-import ErrorBoundaryWithRouter from "./components/ErrorBoundary";
+import SideBar from "./components/SideBar";
+import Navbar from "./components/Navbar";
+import { UserContextProvider } from "./contexts/UserContext";
 
 function App() {
   const queryClient = new QueryClient();
@@ -18,14 +20,16 @@ function App() {
       <SidebarProvider>
         <ErrorBoundaryWithRouter>
           <Suspense fallback={<LoadingPage />}>
-            <div className="min-w-3/12">
-              <SideBar />
-            </div>
-            <div className="px-10 w-full min-h-screen bg-neutral-100">
-              <Navbar />
-              <RouteComponent />
-            </div>
-            <Toaster position="top-right" reverseOrder={false} />
+            <UserContextProvider>
+              <div className="min-w-3/12">
+                <SideBar />
+              </div>
+              <div className="w-full px-10">
+                <Navbar />
+                <RouteComponent />
+              </div>
+              <Toaster position="top-right" reverseOrder={false} />
+            </UserContextProvider>
           </Suspense>
         </ErrorBoundaryWithRouter>
       </SidebarProvider>

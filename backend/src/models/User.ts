@@ -34,6 +34,7 @@ export type UserWithOutPassword = Omit<User, "password">;
 
 // User Model
 export default class UserModel {
+  // Get user by email
   static getUserByEmail = async (email: string, dbOrTx: DbOrTx = db) => {
     const users = await dbOrTx
       .select()
@@ -43,6 +44,7 @@ export default class UserModel {
     return users[0];
   };
 
+  // Get user by id
   static getUserById = async (id: number, dbOrTx: DbOrTx = db) => {
     const users = await dbOrTx
       .select()
@@ -52,12 +54,14 @@ export default class UserModel {
     return users[0];
   };
 
+  // Add a new user
   static addUser = async (userData: InsertModel<User>, dbOrTx: DbOrTx = db) => {
     const [newUser] = await dbOrTx.insert(user).values(userData).returning();
     if (!newUser) return undefined;
     return newUser satisfies User;
   };
 
+  // Edit user
   static editUser = async (
     id: number,
     userData: Partial<User>,
@@ -70,6 +74,8 @@ export default class UserModel {
       .returning();
     return updatedUser;
   };
+
+  // Delete user
   static deleteUser = async (id: number, dbOrTx: DbOrTx = db) => {
     const result = await dbOrTx.delete(user).where(eq(user.id, id));
     if (!result.rowCount) return undefined;

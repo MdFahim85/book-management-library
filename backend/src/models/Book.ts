@@ -33,11 +33,13 @@ export type Book = InferSelectModel<typeof book>;
 
 // Book Model
 export default class BookModel {
+  // Get all books
   static getAllBooks = async (dbOrTx: DbOrTx = db) => {
     const books = await dbOrTx.select().from(book);
     return books;
   };
 
+  // Get book by id
   static getBookById = async (id: number, dbOrTx: DbOrTx = db) => {
     const books = await dbOrTx
       .select()
@@ -47,6 +49,7 @@ export default class BookModel {
     return books[0];
   };
 
+  // Get book by author id
   static getBooksByAuthorId = async (authorId: number, dbOrTx: DbOrTx = db) => {
     const books = await dbOrTx
       .select()
@@ -55,12 +58,14 @@ export default class BookModel {
     return books;
   };
 
+  // Add a new book
   static addBook = async (bookData: InsertModel<Book>, dbOrTx: DbOrTx = db) => {
     const [newBook] = await dbOrTx.insert(book).values(bookData).returning();
     if (!newBook) return undefined;
     return newBook satisfies Book;
   };
 
+  // Edit book
   static editBook = async (
     id: number,
     bookData: Partial<Book>,
@@ -70,6 +75,7 @@ export default class BookModel {
       await dbOrTx.update(book).set(bookData).where(eq(book.id, id)).returning()
     )[0];
 
+  // Delete book
   static deleteBook = async (id: number, dbOrTx: DbOrTx = db) => {
     const result = await dbOrTx.delete(book).where(eq(book.id, id));
     if (!result.rowCount) return undefined;

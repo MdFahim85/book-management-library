@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { Label } from "@radix-ui/react-label";
 import { Eye, EyeClosed } from "lucide-react";
@@ -27,8 +27,6 @@ import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function Login() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const [user, setUser] = useState(initialUserLoginState);
   const [showPass, setShowPass] = useState(false);
@@ -49,17 +47,9 @@ export default function Login() {
       ),
     onSuccess: (data) => {
       if (data) toast.success(data.message);
-      setUser(initialUserLoginState);
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
       });
-      navigate(
-        location.state
-          ? location.state.from
-          : Client_ROUTEMAP._ +
-              Client_ROUTEMAP.books.root +
-              Client_ROUTEMAP.books.index
-      );
     },
     onError: (error) => {
       toast.error(error.message);
@@ -67,7 +57,7 @@ export default function Login() {
   });
 
   return (
-    <div className="flex justify-center items-center min-h-10/12">
+    <div className="flex justify-center items-center h-full w-full">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Login in to your account</CardTitle>

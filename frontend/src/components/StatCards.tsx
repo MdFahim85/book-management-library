@@ -39,7 +39,7 @@ function StatCards() {
   });
 
   return (
-    <Card className="mt-4">
+    <Card className="mt-2">
       <CardHeader>
         <CardTitle>
           <p className="text-2xl">Overview</p>

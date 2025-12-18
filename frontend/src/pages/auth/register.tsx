@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { Label } from "@radix-ui/react-label";
 import { Eye, EyeClosed } from "lucide-react";
@@ -27,8 +27,6 @@ import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function Register() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-
   const [user, setUser] = useState(initialUserRegisterState);
   const [showPass, setShowPass] = useState(false);
 
@@ -48,15 +46,9 @@ export default function Register() {
       ),
     onSuccess: (data) => {
       if (data) toast.success(data.message);
-      setUser(initialUserRegisterState);
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
       });
-      navigate(
-        Client_ROUTEMAP._ +
-          Client_ROUTEMAP.books.root +
-          Client_ROUTEMAP.books.index
-      );
     },
     onError: (error) => {
       toast.error(error.message);
@@ -64,7 +56,7 @@ export default function Register() {
   });
 
   return (
-    <div className="flex justify-center items-center  min-h-10/12">
+    <div className="flex justify-center items-center h-full w-full">
       <Card className="w-full max-w-lg">
         <CardHeader>
           <CardTitle>Register a new account</CardTitle>

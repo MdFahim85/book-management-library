@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { LogInIcon, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "./ui/button";
 
@@ -15,6 +15,7 @@ import type { GetRes } from "@backend/types/req-res";
 export default function Navbar() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { data: user } = useQuery({
     queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
@@ -29,9 +30,7 @@ export default function Navbar() {
     mutationFn: () =>
       modifiedFetch<GetRes<typeof userLogout>>(
         Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.userLogout,
-        {
-          method: "post",
-        }
+        { method: "post" }
       ),
     onSuccess: (data) => {
       if (data) toast.success(data.message);
@@ -39,7 +38,9 @@ export default function Navbar() {
         [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
         null
       );
-      navigate(Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.login);
+      navigate(Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.login, {
+        state: { from: location.pathname + location.search },
+      });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -48,7 +49,7 @@ export default function Navbar() {
   });
 
   return (
-    <nav className="py-4">
+    <nav className="py-2">
       <ul className="flex gap-4 justify-end items-center">
         {user ? (
           <>

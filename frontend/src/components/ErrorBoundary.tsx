@@ -1,8 +1,8 @@
-// ErrorBoundary.tsx
 import { Component, type ReactNode } from "react";
 import { Button } from "./ui/button";
 import type { NavigateFunction, Location } from "react-router-dom";
 import { withRouter } from "./withRouter";
+import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 interface Props {
   children: ReactNode;
@@ -33,7 +33,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   resetAndRedirect = () => {
     this.setState({ hasError: false, error: null });
-    this.props.navigate?.("/"); 
+    this.props.navigate?.(Client_ROUTEMAP._);
   };
 
   render() {

@@ -22,7 +22,9 @@ export const userLogout: RequestHandler<{}, { message: string }> = async (
   _,
   res
 ) => {
+  // Clear token from cookies
   res.clearCookie(jwtToken);
+
   res.json({ message: "Logged out successfully" });
 };
 
@@ -32,14 +34,18 @@ export const userLogin: RequestHandler<
   { message: string },
   Partial<User>
 > = async (req, res) => {
+  // Validate email and password
   const { email, password } = await userValidator.parseAsync(req.body);
 
+  // User lookup and throw on failed query
   const user = await UserModel.getUserByEmail(email);
   if (!user) throw new ResponseError("No user found", status.NOT_FOUND);
 
+  // Password checker
   const match = await passwordChecker(password, user.password);
   if (!match) throw new ResponseError("Wrong credentials", status.UNAUTHORIZED);
 
+  // JWT token generation and setting cookie
   const token = generateAccessToken(user.id);
   res.cookie(jwtToken, token, {
     maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -56,18 +62,21 @@ export const userRegister: RequestHandler<
   { message: string },
   User
 > = async (req, res) => {
+  // Hashing the password
   const { password } = req.body;
   const hashedPassword = await passwordHash(password);
   req.body.password = hashedPassword;
 
+  // Adding new user to db after validation
   const user = await UserModel.addUser(
     await addUserSchema.parseAsync(req.body)
   );
 
+  // Throw on failed query
   if (!user) throw new ResponseError("User not added", status.BAD_REQUEST);
 
+  // JWT token generation and setting cookie
   const token = generateAccessToken(user.id);
-
   res.cookie(jwtToken, token, {
     maxAge: 7 * 24 * 60 * 60 * 1000,
     sameSite: "none",
@@ -83,11 +92,13 @@ export const editUser: RequestHandler<
   { message: string },
   Partial<User> & { oldPassword?: string }
 > = async (req, res) => {
+  // Id validation
   const { id } = await idValidator.parseAsync(req.params);
 
+  // Separating old password and new details
   const { oldPassword, ...userDetails } = req.body;
 
-  // Check if user exists
+  // User lookup and throw on failed query
   const dbUser = await UserModel.getUserById(id);
   if (!dbUser) throw new ResponseError("User not found", status.NOT_FOUND);
 
@@ -109,10 +120,13 @@ export const editUser: RequestHandler<
     userDetails.password = await passwordHash(userDetails.password);
   }
 
+  // User update
   const user = await UserModel.editUser(
     id,
     await updateUserSchema.parseAsync(userDetails)
   );
+
+  // Throw on failed query
   if (!user)
     throw new ResponseError("Failed to update the user", status.BAD_REQUEST);
 
@@ -125,6 +139,7 @@ export const deleteUser: RequestHandler<
   { message: string },
   Pick<User, "password">
 > = async (req, res) => {
+  // Id validation
   const { id } = await idValidator.parseAsync(req.params);
 
   const { password } = req.body;
@@ -132,6 +147,7 @@ export const deleteUser: RequestHandler<
     throw new ResponseError("Please provide password", status.UNAUTHORIZED);
   }
 
+  // User lookup, password check and throw on failed query
   const dbUser = await UserModel.getUserById(id);
   if (dbUser) {
     const match = await passwordChecker(password, dbUser.password);

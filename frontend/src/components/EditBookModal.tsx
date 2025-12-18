@@ -82,7 +82,7 @@ function EditBookModal({ book }: { book: Book }) {
         queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
       });
       if (data) toast.success(data.message);
-      setUpdatedBook(book);
+      setUpdatedBook(data!.data);
       setModalOpen(false);
     },
     onError: (error) => {
@@ -172,7 +172,7 @@ function EditBookModal({ book }: { book: Book }) {
             </DialogClose>
             <Button
               type="submit"
-              disabled={updatedBook === book || isEditing || !authors.length  }
+              disabled={updatedBook === book || isEditing || !authors.length}
             >
               {isEditing ? "Editing..." : "Edit Book"}
             </Button>
