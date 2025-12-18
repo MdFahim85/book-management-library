@@ -10,8 +10,8 @@ import Client_ROUTEMAP from "./misc/Client_ROUTEMAP";
 
 const AuthorsLazy = lazy(() => import("./pages/authors/index"));
 const BooksLazy = lazy(() => import("./pages/books/index"));
-const RegisterLazy = lazy(() => import("./pages/auth/register"));
-const LoginLazy = lazy(() => import("./pages/auth/login"));
+const RegisterLazy = lazy(() => import("./pages/auth/register/index"));
+const LoginLazy = lazy(() => import("./pages/auth/login/index"));
 const BooksByAuthorLazy = lazy(() => import("./components/BooksByAuthor"));
 
 const RouteComponent = () => (
@@ -22,6 +22,8 @@ const RouteComponent = () => (
           path={Client_ROUTEMAP._}
           element={<Navigate to={Client_ROUTEMAP.books.root} />}
         />
+
+        {/* Auth routes */}
         <Route path={Client_ROUTEMAP.auth.root}>
           <Route
             path={Client_ROUTEMAP.auth.register}
@@ -44,6 +46,8 @@ const RouteComponent = () => (
             }
           />
         </Route>
+
+        {/* Authors routes */}
         <Route path={Client_ROUTEMAP.authors.root}>
           <Route
             path={Client_ROUTEMAP.authors.index}
@@ -56,6 +60,8 @@ const RouteComponent = () => (
             }
           />
         </Route>
+
+        {/* Books routes */}
         <Route path={Client_ROUTEMAP.books.root}>
           <Route
             path={Client_ROUTEMAP.books.index}
@@ -78,6 +84,8 @@ const RouteComponent = () => (
             }
           />
         </Route>
+
+        {/* Notfound route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

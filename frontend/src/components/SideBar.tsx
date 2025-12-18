@@ -1,58 +1,41 @@
 import { Link } from "react-router-dom";
-
 import { Book, BookA, User } from "lucide-react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "./ui/sidebar";
-import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 export default function SideBar() {
   return (
-    <Sidebar className="w-3/12">
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="mt-4 mb-10">
+    <aside className="h-full bg-background border-r border-border">
+      <div className="p-6">
+        <Link
+          to="/books"
+          className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
+        >
+          <BookA className="w-6 h-6" />
+          <h1 className="text-xl font-semibold">Book Library Management</h1>
+        </Link>
+      </div>
+
+      <nav className="px-3 mt-8">
+        <ul className="space-y-2">
+          <li>
             <Link
-              to={Client_ROUTEMAP.books.root}
-              className="flex items-center "
+              to="/books"
+              className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
             >
-              <BookA className="me-2" />{" "}
-              <p className="text-xl">Book Library Management</p>
+              <Book className="w-5 h-5" />
+              <span className="text-base font-medium">Books</span>
             </Link>
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={Client_ROUTEMAP._ + Client_ROUTEMAP.books.root}>
-                    <div className="flex items-center text-lg gap-4">
-                      <Book />
-                      <span>Books</span>
-                    </div>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link to={Client_ROUTEMAP.authors.root}>
-                    <div className="flex items-center text-lg gap-4">
-                      <User />
-                      <span>Authors</span>
-                    </div>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+          </li>
+          <li>
+            <Link
+              to="/authors"
+              className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              <User className="w-5 h-5" />
+              <span className="text-base font-medium">Authors</span>
+            </Link>
+          </li>
+        </ul>
+      </nav>
+    </aside>
   );
 }

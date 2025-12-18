@@ -111,13 +111,9 @@ export const editUser: RequestHandler<
         "New password cannot be same as old password",
         status.CONFLICT
       );
-  }
-
-  // if new password not provided
-  if (!userDetails.password) {
-    userDetails.password = dbUser.password;
-  } else {
     userDetails.password = await passwordHash(userDetails.password);
+  } else {
+    userDetails.password = dbUser.password;
   }
 
   // User update

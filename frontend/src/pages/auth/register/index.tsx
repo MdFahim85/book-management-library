@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { Label } from "@radix-ui/react-label";
 import { Eye, EyeClosed } from "lucide-react";
-import { Button } from "../../components/ui/button";
+import { Button } from "../../../components/ui/button";
 import {
   Card,
   CardAction,
@@ -13,36 +13,35 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
+} from "../../../components/ui/card";
+import { Input } from "../../../components/ui/input";
 
-import Form from "../../components/Form";
-import Client_ROUTEMAP from "../../misc/Client_ROUTEMAP";
-import { initialUserLoginState } from "../../misc/initialStates";
-import { modifiedFetch } from "../../misc/modifiedFetch";
-import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
+import Form from "../../../components/Form";
+import Client_ROUTEMAP from "../../../misc/Client_ROUTEMAP";
+import { initialUserRegisterState } from "../../../misc/initialStates";
+import { modifiedFetch } from "../../../misc/modifiedFetch";
+import Server_ROUTEMAP from "../../../misc/Server_ROUTEMAP";
 
-import type { userLogin } from "@backend/controllers/user";
+import type { userRegister } from "@backend/controllers/user";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
-export default function Login() {
+export default function Register() {
   const queryClient = useQueryClient();
-
-  const [user, setUser] = useState(initialUserLoginState);
+  const [user, setUser] = useState(initialUserRegisterState);
   const [showPass, setShowPass] = useState(false);
 
   const {
-    mutate: loginUser,
-    isPending: isLogginIn,
+    mutate: registerUser,
+    isPending: isRegistering,
     isError,
     error,
   } = useMutation({
     mutationFn: () =>
-      modifiedFetch<GetRes<typeof userLogin>>(
-        Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.userLogin,
+      modifiedFetch<GetRes<typeof userRegister>>(
+        Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.userRegister,
         {
           method: "post",
-          body: JSON.stringify(user satisfies GetReqBody<typeof userLogin>),
+          body: JSON.stringify(user satisfies GetReqBody<typeof userRegister>),
         }
       ),
     onSuccess: (data) => {
@@ -60,22 +59,26 @@ export default function Login() {
     <div className="flex justify-center items-center h-full w-full">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Login in to your account</CardTitle>
-          <CardDescription>
-            Enter your credentials below to Login
-          </CardDescription>
+          <CardTitle>Register a new account</CardTitle>
+          <CardDescription>Enter your email below to register</CardDescription>
           <CardAction>
             <Link
-              to={
-                Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.register
-              }
+              to={Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.login}
             >
-              <Button variant="link">Register</Button>
+              <Button variant="link">Login</Button>
             </Link>
           </CardAction>
         </CardHeader>
         <CardContent>
-          <Form onSubmit={() => loginUser()}>
+          <Form
+            onSubmit={() => {
+              if (user.password !== user.confirmPassword) {
+                toast.error("Passwords dont match");
+                return;
+              }
+              registerUser();
+            }}
+          >
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -91,7 +94,20 @@ export default function Login() {
                   required
                 />
               </div>
-
+              <div className="grid gap-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="john doe"
+                  value={user.name}
+                  onChange={({ target: { value } }) =>
+                    setUser(() => ({ ...user, name: value }))
+                  }
+                  className={`${isError ? "  border-red-500" : ""} `}
+                  required
+                />
+              </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
@@ -118,19 +134,35 @@ export default function Login() {
                   </Button>
                 </div>
               </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                </div>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="********"
+                  required
+                  value={user.confirmPassword}
+                  onChange={({ target: { value } }) =>
+                    setUser(() => ({ ...user, confirmPassword: value }))
+                  }
+                  className={`${isError ? "  border-red-500" : ""} `}
+                />
+              </div>
             </div>
             {isError && (
               <div className="text-center text-red-500 pt-4">
                 {error.message}
               </div>
             )}
-            <div className="mt-4">
+            <div className="mt-8">
               <Button
                 type="submit"
                 className="w-full"
-                disabled={initialUserLoginState === user || isLogginIn}
+                disabled={initialUserRegisterState === user || isRegistering}
               >
-                Login
+                Register
               </Button>
             </div>
           </Form>

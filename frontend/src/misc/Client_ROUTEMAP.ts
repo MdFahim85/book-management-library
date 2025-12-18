@@ -16,4 +16,13 @@ export default {
     login: "login",
     register: "register",
   },
+  users: {
+    _params: { id: ":id" },
+    root: "/users",
+    me: {
+      root: "me",
+      index: "",
+    },
+    user: "user/:userId",
+  },
 } as const;

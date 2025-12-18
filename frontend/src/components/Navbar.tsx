@@ -1,30 +1,24 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { LogInIcon, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { Button } from "./ui/button";
 
+import { useUserContext } from "../contexts/UserContext";
+import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
-import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
+import EditUserModal from "./EditUserModal";
+import LoadingPage from "./Loading";
 
-import type { getSelf, userLogout } from "@backend/controllers/user";
+import type { userLogout } from "@backend/controllers/user";
 import type { GetRes } from "@backend/types/req-res";
+
 
 export default function Navbar() {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const { data: user } = useQuery({
-    queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
-    queryFn: () =>
-      modifiedFetch<GetRes<typeof getSelf>>(
-        Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self
-      ),
-    retry: false,
-  });
+  const { user, isLoading } = useUserContext();
 
   const { mutate: logOut, isPending: isLoggingOut } = useMutation({
     mutationFn: () =>
@@ -38,9 +32,6 @@ export default function Navbar() {
         [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
         null
       );
-      navigate(Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.login, {
-        state: { from: location.pathname + location.search },
-      });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -48,13 +39,23 @@ export default function Navbar() {
     throwOnError: true,
   });
 
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
+  if (!user) {
+    return <></>;
+  }
+
   return (
     <nav className="py-2">
       <ul className="flex gap-4 justify-end items-center">
         {user ? (
           <>
             <li>
-              <span className="font-bold">{user.name}</span>
+              <span className="font-bold flex items-center gap-2">
+                <EditUserModal />
+              </span>
             </li>
             <li>
               <Button
