@@ -68,10 +68,10 @@ export default function EditUserModal() {
       <DialogTrigger asChild>
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           onClick={() => setModalOpen(true)}
         >
-          <p className="font-bold">{user?.name}</p> <Edit />
+          <Edit className="w-5 h-5" /> <p className="font-bold">{user?.name}</p>
         </Button>
       </DialogTrigger>
 
