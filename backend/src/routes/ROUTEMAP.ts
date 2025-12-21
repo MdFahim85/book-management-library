@@ -27,6 +27,8 @@ export default {
     userLogin: "/login",
     userRegister: "/register",
     put: "/:id",
+    theme: "/theme/:id",
+    language: "/language/:id",
     delete: "/:id",
   },
 } as const;

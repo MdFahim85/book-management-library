@@ -15,7 +15,7 @@ import type { getSelf } from "@backend/controllers/user";
 import type { GetRes } from "@backend/types/req-res";
 
 const UserContext = createContext<
-  { user?: User; isLoading: boolean } | undefined
+  { user?: Omit<User, "password">; isLoading: boolean } | undefined
 >(undefined);
 
 export default UserContext;

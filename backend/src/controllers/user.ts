@@ -13,7 +13,10 @@ import { generateAccessToken, passwordChecker, passwordHash } from "../utils";
 import { jwtToken } from "../config";
 
 // Get self
-export const getSelf: RequestHandler<{}, User> = (req, res) => {
+export const getSelf: RequestHandler<
+  {},
+  Omit<User,"password">
+> = (req, res) => {
   res.send(req.user);
 };
 
@@ -156,4 +159,59 @@ export const deleteUser: RequestHandler<
   }
 
   res.json({ message: result });
+};
+
+// Update User Theme
+export const editUserTheme: RequestHandler<
+  Partial<typeof ROUTEMAP.users._params>,
+  { message: string },
+  Pick<User, "theme">
+> = async (req, res) => {
+  // Id validation
+  const { id } = await idValidator.parseAsync(req.params);
+
+  // User lookup and throw on failed query
+  const dbUser = await UserModel.getUserById(id);
+  if (!dbUser) throw new ResponseError("User not found", status.NOT_FOUND);
+
+  // User update
+  const user = await UserModel.editUser(
+    id,
+    await updateUserSchema.parseAsync(req.body)
+  );
+
+  // Throw on failed query
+  if (!user)
+    throw new ResponseError("Failed to update the theme", status.BAD_REQUEST);
+
+  res.json({ message: "User theme preference has been updated" });
+};
+
+// Update User Language
+export const editUserLanguage: RequestHandler<
+  Partial<typeof ROUTEMAP.users._params>,
+  { message: string },
+  Pick<User, "language">
+> = async (req, res) => {
+  // Id validation
+  const { id } = await idValidator.parseAsync(req.params);
+
+  // User lookup and throw on failed query
+  const dbUser = await UserModel.getUserById(id);
+  if (!dbUser) throw new ResponseError("User not found", status.NOT_FOUND);
+
+  // User update
+  const user = await UserModel.editUser(
+    id,
+    await updateUserSchema.parseAsync(req.body)
+  );
+
+  // Throw on failed query
+  if (!user)
+    throw new ResponseError(
+      "Failed to update the language",
+      status.BAD_REQUEST
+    );
+
+  res.json({ message: "User language preference has been updated" });
 };

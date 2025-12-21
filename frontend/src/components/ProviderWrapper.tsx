@@ -15,12 +15,12 @@ const ProviderWrapper: FC<PropsWithChildren> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <ErrorBoundaryWithRouter>
         <Suspense fallback={<LoadingPage />}>
-          <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-            <UserContextProvider>
+          <UserContextProvider>
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
               {children}
               <Toaster position="top-right" reverseOrder={false} />
-            </UserContextProvider>
-          </ThemeProvider>
+            </ThemeProvider>
+          </UserContextProvider>
         </Suspense>
       </ErrorBoundaryWithRouter>
     </QueryClientProvider>

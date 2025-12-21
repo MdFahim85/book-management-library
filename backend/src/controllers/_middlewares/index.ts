@@ -65,36 +65,37 @@ const storage = multer.diskStorage({
 
 export const upload = multer({ storage });
 
-  export const authMiddleware: RequestHandler = async (req, _res, next) => {
-    const { token } = req.cookies;
-    if (!token) throw new ResponseError("No token provided", status.UNAUTHORIZED);
+export const authMiddleware: RequestHandler = async (req, _res, next) => {
+  const { token } = req.cookies;
+  if (!token) throw new ResponseError("No token provided", status.UNAUTHORIZED);
 
-    let verifiedToken: string | jwt.JwtPayload;
+  let verifiedToken: string | jwt.JwtPayload;
 
-    try {
-      verifiedToken = jwt.verify(token, env.jwtSecret);
-    } catch (error) {
-      throw new ResponseError("Broken Token", status.UNAUTHORIZED);
-    }
+  try {
+    verifiedToken = jwt.verify(token, env.jwtSecret);
+  } catch (error) {
+    throw new ResponseError("Broken Token", status.UNAUTHORIZED);
+  }
 
-    if (!verifiedToken)
-      throw new ResponseError("Unauthorized access", status.UNAUTHORIZED);
+  if (!verifiedToken)
+    throw new ResponseError("Unauthorized access", status.UNAUTHORIZED);
 
-    const { id } = await jwtSchema.parseAsync(verifiedToken).catch((reason) => {
-      console.error(reason);
+  const { id } = await jwtSchema.parseAsync(verifiedToken).catch((reason) => {
+    console.error(reason);
 
-      throw new ResponseError("Invalid Token", status.UNPROCESSABLE_ENTITY);
-    });
+    throw new ResponseError("Invalid Token", status.UNPROCESSABLE_ENTITY);
+  });
 
-    const user = await UserModel.getUserById(id);
+  const user = await UserModel.getUserById(id);
 
-    if (!user) throw new ResponseError("Invalid User", status.NOT_FOUND);
+  if (!user) throw new ResponseError("Invalid User", status.NOT_FOUND);
 
-    // Not omitting password
-    req.user = user;
+  // Omitting password
+  const { password, ...userWithoutPass } = user;
+  req.user = userWithoutPass;
 
-    next();
-  };
+  next();
+};
 
 const jwtSchema = z.object({
   id: z.number().int().min(1),

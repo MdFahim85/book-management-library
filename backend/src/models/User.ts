@@ -1,9 +1,12 @@
 import { eq, InferSelectModel } from "drizzle-orm";
-import { pgTable, serial, varchar } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, serial, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import z from "zod";
 
 import { db } from "../config/database";
+
+export const themeEnum = pgEnum("theme", ["light", "dark", "system"]);
+export const languageEnum = pgEnum("language", ["english", "bangla"]);
 
 // User Schema
 export const user = pgTable("users", {
@@ -11,6 +14,8 @@ export const user = pgTable("users", {
   name: varchar("name", { length: 255 }).notNull(),
   password: varchar("password", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
+  theme: themeEnum("theme").notNull().default("light"),
+  language: languageEnum("language").notNull().default("english"),
 });
 
 // User Schema Validators
@@ -19,12 +24,16 @@ export const addUserSchema = createInsertSchema(user, {
   name: (schema) => schema.min(3).max(255),
   password: (schema) => schema.min(6).max(255),
   email: () => z.email().max(255),
+  theme: () => z.enum(["light", "dark", "system"]),
+  language: () => z.enum(["english", "bangla"]),
 });
 export const updateUserSchema = createUpdateSchema(user, {
   id: (schema) => schema.transform(() => undefined),
   name: (schema) => schema.min(3).max(255),
   password: (schema) => schema.min(6).max(255),
   email: () => z.email().max(255),
+  theme: () => z.enum(["light", "dark", "system"]),
+  language: () => z.enum(["english", "bangla"]),
 });
 
 // User type

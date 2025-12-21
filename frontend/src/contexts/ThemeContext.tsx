@@ -1,4 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useUserContext } from "./UserContext";
+import LoadingPage from "../components/Loading";
+import { QueryClient, useMutation } from "@tanstack/react-query";
+import { modifiedFetch } from "../misc/modifiedFetch";
+import type { GetReqBody, GetRes } from "@backend/types/req-res";
+import type { editUserTheme } from "@backend/controllers/user";
+import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import toast from "react-hot-toast";
 
 type Theme = "dark" | "light" | "system";
 
@@ -23,12 +31,38 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 export function ThemeProvider({
   children,
   defaultTheme = "light",
-  storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
+  const queryClient = new QueryClient();
+  const { user, isLoading } = useUserContext();
+  const [localTheme, setLocalTheme] = useState<Theme | null>(null);
+  const theme = localTheme ?? (user?.theme || defaultTheme);
+
+  const { mutate: mutateUserTheme } = useMutation({
+    mutationFn: () =>
+      modifiedFetch<GetRes<typeof editUserTheme>>(
+        Server_ROUTEMAP.users.root +
+          Server_ROUTEMAP.users.theme.replace(
+            Server_ROUTEMAP.users._params.id,
+            user!.id.toString()
+          ),
+        {
+          method: "put",
+          body: JSON.stringify({ theme } satisfies GetReqBody<
+            typeof editUserTheme
+          >),
+        }
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+    throwOnError: true,
+  });
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -51,10 +85,14 @@ export function ThemeProvider({
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+      setLocalTheme(theme);
+      mutateUserTheme();
     },
   };
+
+  if (isLoading) {
+    return <LoadingPage />;
+  }
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
