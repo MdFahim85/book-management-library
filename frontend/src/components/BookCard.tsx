@@ -1,15 +1,12 @@
-import { EyeIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { useUserContext } from "../contexts/UserContext";
-import { API_URL } from "../misc/modifiedFetch";
-import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
+import DeleteBookModal from "./DeleteBookModal";
 import EditBookModal from "./EditBookModal";
 import LoadingPage from "./Loading";
 
 import type { Book } from "@backend/models/Book";
-import DeleteBookModal from "./DeleteBookModal";
-import { Link } from "react-router-dom";
-import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 function BookCard({ book }: { book: Book }) {
   const { user, isLoading } = useUserContext();
@@ -20,7 +17,7 @@ function BookCard({ book }: { book: Book }) {
 
   return (
     <div className="w-full">
-      <div className="flex items-center gap-4 w-full p-4 ">
+      <div className="flex items-center gap-4 w-full py-4 pe-2">
         <Link
           to={Client_ROUTEMAP.books.bookDetails.replace(
             Client_ROUTEMAP.books._params.id,
@@ -28,16 +25,7 @@ function BookCard({ book }: { book: Book }) {
           )}
         >
           <div className="font-semibold text-neutral-800 dark:text-neutral-100 tracking-wide flex gap-4">
-            <a
-              target="_blank"
-              href={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}
-            >
-              <EyeIcon
-                size={20}
-                className="hover:text-emerald-400 transition-colors"
-              />
-            </a>
-            {book.name.toUpperCase()}
+            {book.name}
           </div>
         </Link>
 

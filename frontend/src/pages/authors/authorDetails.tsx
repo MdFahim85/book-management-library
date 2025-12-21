@@ -11,16 +11,16 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 
+import DeleteAuthorModal from "../../components/DeleteAuthorModal";
+import EditAuthorModal from "../../components/EditAuthorModal";
+import LoadingPage from "../../components/Loading";
+import { useUserContext } from "../../contexts/UserContext";
 import Client_ROUTEMAP from "../../misc/Client_ROUTEMAP";
 import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
 import { modifiedFetch } from "../../misc/modifiedFetch";
-import LoadingPage from "../../components/Loading";
 
 import type { getAuthorDetailsById } from "@backend/controllers/authors";
 import type { GetRes } from "@backend/types/req-res";
-import EditAuthorModal from "../../components/EditAuthorModal";
-import DeleteAuthorModal from "../../components/DeleteAuthorModal";
-import { useUserContext } from "../../contexts/UserContext";
 
 export default function AuthorDetails() {
   const { id } = useParams<(typeof Client_ROUTEMAP)["authors"]["_params"]>();
@@ -77,8 +77,8 @@ export default function AuthorDetails() {
           <CardContent className="pt-6">
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <div className="rounded-full bg-primary/10 p-3">
-                  <User className="h-6 w-6 text-primary" />
+                <div className="rounded-full bg-blue-500/10 p-3">
+                  <User className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-muted-foreground mb-1">
@@ -90,8 +90,8 @@ export default function AuthorDetails() {
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="rounded-full bg-secondary/10 p-3">
-                  <Calendar className="h-6 w-6 text-secondary-foreground" />
+                <div className="rounded-full bg-purple-500/10 p-3">
+                  <Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-muted-foreground mb-1">

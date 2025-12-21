@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 
-import { ArrowLeft, BookOpen, Calendar, Download, User } from "lucide-react";
+import { ArrowLeft, BookOpen, Calendar, User } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -17,7 +17,8 @@ import LoadingPage from "../../components/Loading";
 import { useUserContext } from "../../contexts/UserContext";
 import Client_ROUTEMAP from "../../misc/Client_ROUTEMAP";
 import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
-import { API_URL, modifiedFetch } from "../../misc/modifiedFetch";
+import { modifiedFetch } from "../../misc/modifiedFetch";
+import BookPdfReader from "../../components/BookPdfReader";
 
 import type { getBookDetails } from "@backend/controllers/books";
 import type { GetRes } from "@backend/types/req-res";
@@ -81,16 +82,7 @@ export default function BookDetails() {
                   </CardTitle>
                 </div>
               </div>
-              <Button asChild className="mt-1 shrink-0">
-                <a
-                  href={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </a>
-              </Button>
+              <BookPdfReader book={book} />
             </div>
           </CardHeader>
 
@@ -127,7 +119,7 @@ export default function BookDetails() {
           </CardContent>
 
           {user!.id === book.createdBy && (
-            <CardFooter className="border-t bg-muted/30">
+            <CardFooter className="border-t">
               <div className="flex justify-center gap-4 w-full py-2">
                 <EditBookModal book={book} />
                 <DeleteBookModal id={book.id} />

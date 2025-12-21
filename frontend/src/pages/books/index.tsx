@@ -134,7 +134,7 @@ function Books() {
               <Button
                 variant="ghost"
                 onClick={() => setSelectedAuthorId(undefined)}
-                disabled={!authors.length}
+                disabled={!authors.length || !selectedAuthorId}
               >
                 Clear
               </Button>
