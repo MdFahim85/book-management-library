@@ -6,12 +6,14 @@ export const initialBookState: Book = {
   id: -1,
   name: "",
   authorId: -1,
+  createdBy: -1,
   fileUrl: "",
 };
 
 export const initialAuthorState: Author = {
   id: -1,
   name: "",
+  createdBy: -1,
 };
 
 export const initialUserRegisterState: User & { confirmPassword: string } = {

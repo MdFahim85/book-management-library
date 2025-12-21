@@ -5,6 +5,7 @@ import z from "zod";
 
 import { db } from "../config/database";
 import { author } from "./Author";
+import { user } from "./User";
 
 // Book Schema
 export const book = pgTable("book", {
@@ -13,6 +14,9 @@ export const book = pgTable("book", {
   authorId: integer("authorId")
     .notNull()
     .references(() => author.id, { onDelete: "cascade" }),
+  createdBy: integer("createdBy")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   fileUrl: text("fileUrl").notNull(),
 });
 
@@ -21,11 +25,13 @@ export const insertBookSchema = createInsertSchema(book, {
   id: (schema) => schema.transform(() => undefined),
   name: (schema) => schema.min(3).max(255),
   authorId: () => z.coerce.number().int().gt(0),
+  createdBy: () => z.coerce.number().int().gt(0),
 });
 export const updateBookSchema = createUpdateSchema(book, {
   id: (schema) => schema.transform(() => undefined),
   name: (schema) => schema.min(3).max(255),
   authorId: () => z.coerce.number().int().gt(0),
+  createdBy: () => z.coerce.number().int().gt(0),
 });
 
 // Book type
@@ -44,6 +50,25 @@ export default class BookModel {
     const books = await dbOrTx
       .select()
       .from(book)
+      .where(eq(book.id, id))
+      .limit(1);
+    return books[0];
+  };
+
+  static getBookDetailsById = async (id: number, dbOrTx: DbOrTx = db) => {
+    const books = await dbOrTx
+      .select({
+        id: book.id,
+        name: book.name,
+        authorId: book.authorId,
+        authorName: author.name,
+        createdBy: book.createdBy,
+        createdByName: user.name,
+        fileUrl: book.fileUrl,
+      })
+      .from(book)
+      .leftJoin(user, eq(user.id, book.createdBy))
+      .leftJoin(author, eq(author.id, book.authorId))
       .where(eq(book.id, id))
       .limit(1);
     return books[0];

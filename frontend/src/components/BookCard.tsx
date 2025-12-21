@@ -1,97 +1,55 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { EyeIcon, Trash } from "lucide-react";
-import toast from "react-hot-toast";
+import { EyeIcon } from "lucide-react";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
-import { Button } from "./ui/button";
-
-import { API_URL, modifiedFetch } from "../misc/modifiedFetch";
+import { useUserContext } from "../contexts/UserContext";
+import { API_URL } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import EditBookModal from "./EditBookModal";
+import LoadingPage from "./Loading";
 
-import type { deleteBook } from "@backend/controllers/books";
 import type { Book } from "@backend/models/Book";
-import type { GetRes } from "@backend/types/req-res";
+import DeleteBookModal from "./DeleteBookModal";
+import { Link } from "react-router-dom";
+import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 function BookCard({ book }: { book: Book }) {
-  const queryClient = useQueryClient();
+  const { user, isLoading } = useUserContext();
 
-  const { mutate: mutateDeleteBook, isPending: isDeleting } = useMutation({
-    mutationFn: (id: number) =>
-      modifiedFetch<GetRes<typeof deleteBook>>(
-        Server_ROUTEMAP.books.root +
-          Server_ROUTEMAP.books.delete.replace(
-            Server_ROUTEMAP.books._params.id,
-            id.toString()
-          ),
-        { method: "delete" }
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
-      });
-    },
-    onError: (error) => toast.error(error.message),
-    throwOnError: true,
-  });
+  if (isLoading) {
+    return <LoadingPage />;
+  }
 
   return (
     <div className="w-full">
       <div className="flex items-center gap-4 w-full p-4 ">
-        <div className="font-semibold text-neutral-800 dark:text-neutral-100 tracking-wide flex gap-4">
-          <a
-            target="_blank"
-            href={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}
-          >
-            <EyeIcon
-              size={20}
-              className="hover:text-emerald-400 transition-colors"
-            />
-          </a>
-          {book.name.toUpperCase()}
-        </div>
+        <Link
+          to={Client_ROUTEMAP.books.bookDetails.replace(
+            Client_ROUTEMAP.books._params.id,
+            book.id.toString()
+          )}
+        >
+          <div className="font-semibold text-neutral-800 dark:text-neutral-100 tracking-wide flex gap-4">
+            <a
+              target="_blank"
+              href={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}
+            >
+              <EyeIcon
+                size={20}
+                className="hover:text-emerald-400 transition-colors"
+              />
+            </a>
+            {book.name.toUpperCase()}
+          </div>
+        </Link>
 
-        <div className="ms-auto flex gap-3 text-neutral-100">
-          {/* Edit Modal */}
-          <EditBookModal book={book} />
-          {/* Delete Modal */}
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">
-                <Trash />
-                Delete
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action will delete the book from database
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => mutateDeleteBook(book.id)}
-                  disabled={isDeleting}
-                  className="bg-red-400 hover:bg-red-600"
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+        {user!.id === book.createdBy && (
+          <div className="ms-auto flex gap-3 text-neutral-100">
+            {/* Edit Modal */}
+
+            <EditBookModal book={book} />
+            {/* Delete Modal */}
+            <DeleteBookModal id={book.id} />
+          </div>
+        )}
       </div>
     </div>
   );

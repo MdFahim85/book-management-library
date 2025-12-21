@@ -15,16 +15,20 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
+import { useUserContext } from "../contexts/UserContext";
+import { initialAuthorState } from "../misc/initialStates";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import Form from "./Form";
+import LoadingPage from "./Loading";
 
 import type { addAuthor } from "@backend/controllers/authors";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
-import { initialAuthorState } from "../misc/initialStates";
 
 export default function AddAuthorModal() {
   const queryClient = useQueryClient();
+  const { user, isLoading } = useUserContext();
+
 
   const [modalOpen, setModalOpen] = useState(false);
   const [author, setAuthor] = useState(initialAuthorState);
@@ -38,6 +42,7 @@ export default function AddAuthorModal() {
           body: JSON.stringify(author satisfies GetReqBody<typeof addAuthor>),
         }
       ),
+
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
@@ -51,6 +56,11 @@ export default function AddAuthorModal() {
     },
     throwOnError: true,
   });
+
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
@@ -67,6 +77,7 @@ export default function AddAuthorModal() {
       <DialogContent className="sm:max-w-[425px]">
         <Form
           onSubmit={() => {
+            setAuthor(() => ({ ...author, createdBy: user!.id }));
             addNewAuthor();
           }}
         >

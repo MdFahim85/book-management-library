@@ -4,7 +4,7 @@ import {
   addAuthor,
   deleteAuthor,
   editAuthor,
-  getAuthorById,
+  getAuthorDetailsById,
   getAuthors,
 } from "../controllers/authors";
 import ROUTEMAP from "./ROUTEMAP";
@@ -12,7 +12,7 @@ import ROUTEMAP from "./ROUTEMAP";
 const authorRouter = express.Router();
 
 authorRouter.get(ROUTEMAP.authors.get, getAuthors);
-authorRouter.get(ROUTEMAP.authors.getById, getAuthorById);
+authorRouter.get(ROUTEMAP.authors.getById, getAuthorDetailsById);
 authorRouter.post(ROUTEMAP.authors.post, addAuthor);
 authorRouter.put(ROUTEMAP.authors.put, editAuthor);
 authorRouter.delete(ROUTEMAP.authors.delete, deleteAuthor);

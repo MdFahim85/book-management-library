@@ -41,8 +41,23 @@ import type { GetRes } from "@backend/types/req-res";
 
 const columns: ColumnDef<Book>[] = [
   {
+    id: "serial",
+    header: "S/N",
+    cell: ({ row, table }) => {
+      const pageIndex = table.getState().pagination.pageIndex;
+      const pageSize = table.getState().pagination.pageSize;
+      return (
+        <div className="w-10 font-bold text-center">
+          {pageIndex * pageSize + row.index + 1}
+        </div>
+      );
+    },
+    size: 50,
+  },
+  {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => <BookCard book={row.original} />,
   },
 ];
 
@@ -131,7 +146,10 @@ function Books() {
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={header.id === "serial" ? "w-16" : ""}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -144,15 +162,18 @@ function Books() {
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows.length ? (
+              {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                   >
-                    {row.getVisibleCells().map((book) => (
-                      <TableCell key={book.id}>
-                        <BookCard book={row.original} />
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>

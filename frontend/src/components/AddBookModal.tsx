@@ -29,11 +29,13 @@ import {
   SelectValue,
 } from "./ui/select";
 
+import { useUserContext } from "../contexts/UserContext";
 import { EMPTY_ARRAY } from "../misc";
 import { initialBookState } from "../misc/initialStates";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import Form from "./Form";
+import LoadingPage from "./Loading";
 
 import type { getAuthors } from "@backend/controllers/authors";
 import type { addBook } from "@backend/controllers/books";
@@ -42,10 +44,11 @@ import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function AddBookModal() {
   const queryClient = useQueryClient();
+  const { user, isLoading } = useUserContext();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [book, setBook] = useState(initialBookState);
-  const [bookPdf, setBookPdf] = useState<File | null>(null); //
+  const [bookPdf, setBookPdf] = useState<File | null>(null);
 
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
     queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
@@ -61,6 +64,7 @@ export default function AddBookModal() {
         toast.error("Please select a pdf");
         return;
       }
+
       const form = new FormData();
       form.append("fileUrl" satisfies keyof Book, bookPdf);
       form.append(
@@ -95,6 +99,10 @@ export default function AddBookModal() {
   // }) =>
   //   setBook(() => ({ ...book, [id]: id === "date" ? valueAsNumber : value }));
 
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
@@ -109,7 +117,12 @@ export default function AddBookModal() {
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
-        <Form onSubmit={() => addNewBook()}>
+        <Form
+          onSubmit={() => {
+            setBook(() => ({ ...book, createdBy: user!.id }));
+            addNewBook();
+          }}
+        >
           <DialogHeader className="pb-4">
             <DialogTitle>Add a New Book</DialogTitle>
           </DialogHeader>

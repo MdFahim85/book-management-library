@@ -1,93 +1,48 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Trash } from "lucide-react";
-import toast from "react-hot-toast";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "./ui/alert-dialog";
-import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
+import { useUserContext } from "../contexts/UserContext";
 
-import { modifiedFetch } from "../misc/modifiedFetch";
-import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
+import DeleteAuthorModal from "./DeleteAuthorModal";
 import EditAuthorModal from "./EditAuthorModal";
+import LoadingPage from "./Loading";
 
-import type { deleteAuthor } from "@backend/controllers/authors";
 import type { Author } from "@backend/models/Author";
-import type { GetRes } from "@backend/types/req-res";
 
 function AuthorCard({ author }: { author: Author }) {
-  const queryClient = useQueryClient();
+  const { user, isLoading } = useUserContext();
 
-  const { mutate: mutateDeleteAuthor, isPending: isDeleting } = useMutation({
-    mutationFn: (id: number) =>
-      modifiedFetch<GetRes<typeof deleteAuthor>>(
-        Server_ROUTEMAP.authors.root +
-          Server_ROUTEMAP.authors.delete.replace(
-            Server_ROUTEMAP.authors._params.id,
-            id.toString()
-          ),
-        { method: "delete" }
-      ),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
-      });
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    throwOnError: true,
-  });
+  if (isLoading) {
+    return <LoadingPage />;
+  }
 
   return (
     <div className="w-full">
-      <div className="flex items-center gap-4 w-full p-4">
-        <div>
-          <p className="font-semibold text-neutral-800 dark:text-neutral-100 tracking-wide">
-            {author.name}
-          </p>
-        </div>
+      <div className="flex items-center gap-4 w-full py-4 pe-2">
+        <Link
+          to={
+            Client_ROUTEMAP.authors.root +
+            "/" +
+            Client_ROUTEMAP.authors.authorDetails.replace(
+              Client_ROUTEMAP.authors._params.id,
+              author.id.toString()
+            )
+          }
+        >
+          <div>
+            <p className="font-semibold text-neutral-800 dark:text-neutral-100 tracking-wide flex gap-4 items-center">
+              {author.name}
+            </p>
+          </div>
+        </Link>
 
-        <div className="ms-auto flex gap-3 text-neutral-100">
-          <EditAuthorModal author={author} />
-
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">
-                <Trash />
-                Delete
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action will delete the author from database
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => mutateDeleteAuthor(author.id)}
-                  disabled={isDeleting}
-                  className="bg-red-400 hover:bg-red-600"
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+        {user!.id === author.createdBy && (
+          <div className="ms-auto flex gap-3 text-neutral-100">
+            {/* Edit author modal */}
+            <EditAuthorModal author={author} />
+            {/* Delete author */}
+            <DeleteAuthorModal id={author.id} />
+          </div>
+        )}
       </div>
     </div>
   );

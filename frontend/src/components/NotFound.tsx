@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 
 import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 function NotFound() {
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col justify-center items-center gap-6 h-full w-full">
       <h1 className="text-2xl text-red-400 font-semibold">
@@ -13,6 +14,8 @@ function NotFound() {
         <Link to={Client_ROUTEMAP._}>
           <Button>Go to Homepage</Button>
         </Link>
+
+        <Button onClick={() => navigate(-1)}>Go back</Button>
       </div>
     </div>
   );

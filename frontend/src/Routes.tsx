@@ -8,10 +8,14 @@ import NotFound from "./components/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Client_ROUTEMAP from "./misc/Client_ROUTEMAP";
 
-const AuthorsLazy = lazy(() => import("./pages/authors/index"));
-const BooksLazy = lazy(() => import("./pages/books/index"));
 const RegisterLazy = lazy(() => import("./pages/auth/register/index"));
 const LoginLazy = lazy(() => import("./pages/auth/login/index"));
+
+const AuthorsLazy = lazy(() => import("./pages/authors/index"));
+const AuthorDetailsLazy = lazy(() => import("./pages/authors/AuthorDetails"));
+
+const BooksLazy = lazy(() => import("./pages/books/index"));
+const BookDetailsLazy = lazy(() => import("./pages/books/bookDetails"));
 const BooksByAuthorLazy = lazy(() => import("./components/BooksByAuthor"));
 
 const RouteComponent = () => (
@@ -59,6 +63,16 @@ const RouteComponent = () => (
               </Suspense>
             }
           />
+          <Route
+            path={Client_ROUTEMAP.authors.authorDetails}
+            element={
+              <Suspense fallback={<LoadingPage />}>
+                <ProtectedRoute allowLoggedInOnly>
+                  <AuthorDetailsLazy />
+                </ProtectedRoute>
+              </Suspense>
+            }
+          />
         </Route>
 
         {/* Books routes */}
@@ -69,6 +83,16 @@ const RouteComponent = () => (
               <Suspense fallback={<LoadingPage />}>
                 <ProtectedRoute allowLoggedInOnly>
                   <BooksLazy />
+                </ProtectedRoute>
+              </Suspense>
+            }
+          />
+          <Route
+            path={Client_ROUTEMAP.books.bookDetails}
+            element={
+              <Suspense fallback={<LoadingPage />}>
+                <ProtectedRoute allowLoggedInOnly>
+                  <BookDetailsLazy />
                 </ProtectedRoute>
               </Suspense>
             }

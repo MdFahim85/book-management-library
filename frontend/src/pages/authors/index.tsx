@@ -6,6 +6,7 @@ import {
   useReactTable,
   type ColumnDef,
 } from "@tanstack/react-table";
+
 import { Button } from "../../components/ui/button";
 import { Card, CardHeader, CardTitle } from "../../components/ui/card";
 import {
@@ -30,8 +31,23 @@ import type { GetRes } from "@backend/types/req-res";
 
 const columns: ColumnDef<Author>[] = [
   {
+    id: "serial",
+    header: "S/N",
+    cell: ({ row, table }) => {
+      const pageIndex = table.getState().pagination.pageIndex;
+      const pageSize = table.getState().pagination.pageSize;
+      return (
+        <div className="w-10 font-bold text-center">
+          {pageIndex * pageSize + row.index + 1}
+        </div>
+      );
+    },
+    size: 50,
+  },
+  {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => <AuthorCard author={row.original} />,
   },
 ];
 
@@ -69,7 +85,10 @@ function Authors() {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead
+                        key={header.id}
+                        className={header.id === "serial" ? "w-16" : ""}
+                      >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -89,9 +108,12 @@ function Authors() {
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                   >
-                    {row.getVisibleCells().map((author) => (
-                      <TableCell key={author.id}>
-                        <AuthorCard author={row.original} />
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>

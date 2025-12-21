@@ -43,6 +43,13 @@
       "when": 1765801581176,
       "tag": "0005_worried_songbird",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1766298855015,
+      "tag": "0006_bent_rafael_vega",
+      "breakpoints": true
     }
   ]
 }

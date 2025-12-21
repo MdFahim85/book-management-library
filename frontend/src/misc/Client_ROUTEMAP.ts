@@ -4,11 +4,13 @@ export default {
     _params: { id: ":id" },
     root: "/authors",
     index: "",
+    authorDetails: ":id",
   },
   books: {
     _params: { id: ":id", authorId: ":authorId" },
     root: "books",
     index: "",
+    bookDetails: ":id",
     authorBooks: "author/:authorId",
   },
   auth: {

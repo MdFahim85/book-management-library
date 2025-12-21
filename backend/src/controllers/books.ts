@@ -22,13 +22,22 @@ export const getBooks: RequestHandler<{}, Book[]> = async (_, res) => {
 
 // Get book details
 export const getBookDetails: RequestHandler<
-  Partial<typeof ROUTEMAP.books._params>
+  Partial<typeof ROUTEMAP.books._params>,
+  {
+    id: number;
+    name: string;
+    authorId: number;
+    authorName: string | null;
+    createdBy: number;
+    createdByName: string | null;
+    fileUrl: string;
+  }
 > = async (req, res) => {
   // Id validation
   const { id } = await idValidator.parseAsync(req.params);
 
   // Book lookup
-  const book = await BookModel.getBookById(id);
+  const book = await BookModel.getBookDetailsById(id);
 
   // Throw on failed query
   if (!book) throw new ResponseError("No book found", status.NOT_FOUND);
@@ -105,6 +114,7 @@ export const editBook: RequestHandler<
 > = async (req, res) => {
   // Id validation
   const { id } = await idValidator.parseAsync(req.params);
+  const user = req.user;
 
   // Read files from multer
   const { fileUrl } = req.files as {
@@ -124,6 +134,12 @@ export const editBook: RequestHandler<
     // Old book lookup
     const oldBook = await BookModel.getBookById(id, tx);
     if (!oldBook) throw new ResponseError("Book not found", status.NOT_FOUND);
+
+    if (oldBook.createdBy !== user!.id)
+      throw new ResponseError(
+        "You are not the creator of this book",
+        status.UNAUTHORIZED
+      );
 
     const result = await BookModel.editBook(
       id,
@@ -158,6 +174,7 @@ export const deleteBook: RequestHandler<
 > = async (req, res) => {
   // Id validation
   const { id } = await idValidator.parseAsync(req.params);
+  const user = req.user;
 
   // DB transaction
   const deleteMessage = await db.transaction(async (tx) => {
@@ -167,6 +184,12 @@ export const deleteBook: RequestHandler<
     // Throw on failed query
     if (!deletedBook)
       throw new ResponseError("No book found", status.NOT_FOUND);
+
+    if (deletedBook.createdBy !== user!.id)
+      throw new ResponseError(
+        "You are not the creator of this book",
+        status.UNAUTHORIZED
+      );
 
     // Transaction start
     const result = await BookModel.deleteBook(id, tx);

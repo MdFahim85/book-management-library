@@ -14,22 +14,28 @@ import ResponseError from "../utils/ResponseError";
 import { idValidator } from "../utils/validators";
 import path from "path";
 import config from "../config";
+import { User } from "../models/User";
 
 // Get all authors
 export const getAuthors: RequestHandler<{}, Author[]> = async (_, res) => {
   res.json(await AuthorModel.getAllAuthors());
 };
 
-// Get author by id
-export const getAuthorById: RequestHandler<
+// Get full author details by id
+export const getAuthorDetailsById: RequestHandler<
   Partial<typeof ROUTEMAP.authors._params>,
-  Author
+  {
+    id: number;
+    name: string;
+    createdBy: number;
+    createdByName: string | null;
+  }
 > = async (req, res) => {
   // Id validation
   const { id } = await idValidator.parseAsync(req.params);
 
   // Author lookup
-  const author = await AuthorModel.getAuthorById(id);
+  const author = await AuthorModel.getAuthorDetailsById(id);
   if (!author) throw new ResponseError("No author found", status.NOT_FOUND);
 
   res.json(author);
@@ -60,12 +66,25 @@ export const editAuthor: RequestHandler<
 > = async (req, res) => {
   // Id validation
   const { id } = await idValidator.parseAsync(req.params);
+  const user = req.user;
+
+  // Author lookup
+  const oldAuthor = await AuthorModel.getAuthorById(id);
+  if (!oldAuthor) throw new ResponseError("No author found", status.NOT_FOUND);
+
+  // Update permission
+  if (oldAuthor.createdBy !== user!.id)
+    throw new ResponseError(
+      "You are not creator of this author",
+      status.UNAUTHORIZED
+    );
 
   // Author update
   const author = await AuthorModel.editAuthor(
     id,
     await updateAuthorSchema.parseAsync(req.body)
   );
+
   // Throw on failed query
   if (!author)
     throw new ResponseError("Failed to update author", status.BAD_REQUEST);
@@ -79,6 +98,18 @@ export const deleteAuthor: RequestHandler<
 > = async (req, res) => {
   // Id validation
   const { id } = await idValidator.parseAsync(req.params);
+  const user = req.user;
+
+  // Author lookup
+  const author = await AuthorModel.getAuthorById(id);
+  if (!author) throw new ResponseError("No author found", status.NOT_FOUND);
+
+  // Delete permission
+  if (author.createdBy !== user!.id)
+    throw new ResponseError(
+      "You are not the creator of this author",
+      status.UNAUTHORIZED
+    );
 
   // Get books of author
   const books = await BookModel.getBooksByAuthorId(id);
@@ -94,11 +125,11 @@ export const deleteAuthor: RequestHandler<
   }
 
   // Delete author
-  const deletedAuthor = await AuthorModel.deleteAuthor(id);
+  const deletedMessage = await AuthorModel.deleteAuthor(id);
 
   // Throw on failed query
-  if (!deletedAuthor)
+  if (!deletedMessage)
     throw new ResponseError("Failed to delete author", status.BAD_REQUEST);
 
-  res.json(deletedAuthor);
+  res.json(deletedMessage);
 };
