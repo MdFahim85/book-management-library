@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+
+import { Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -21,14 +22,15 @@ import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import Form from "./Form";
 import LoadingPage from "./Loading";
+import { useT } from "../types/i18nTypes";
 
 import type { addAuthor } from "@backend/controllers/authors";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function AddAuthorModal() {
+  const t = useT();
   const queryClient = useQueryClient();
   const { user, isLoading } = useUserContext();
-
 
   const [modalOpen, setModalOpen] = useState(false);
   const [author, setAuthor] = useState(initialAuthorState);
@@ -70,7 +72,7 @@ export default function AddAuthorModal() {
           onClick={() => setModalOpen(true)}
         >
           <Plus />
-          Add Author
+          {t("authors.add")}
         </Button>
       </DialogTrigger>
 
@@ -82,11 +84,11 @@ export default function AddAuthorModal() {
           }}
         >
           <DialogHeader className="pb-4">
-            <DialogTitle>Add a New Author</DialogTitle>
+            <DialogTitle> {t("authors.add")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 pb-4">
             <div className="grid gap-3">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name"> {t("authors.name")}</Label>
               <Input
                 id="name"
                 name="name"
@@ -100,14 +102,14 @@ export default function AddAuthorModal() {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                {t("actions.cancel")}
               </Button>
             </DialogClose>
             <Button
               type="submit"
               disabled={initialAuthorState === author || isAdding}
             >
-              {isAdding ? "Adding..." : "Add Author"}
+              {isAdding ? `${t("actions.adding")}` : `${t("actions.add")}`}
             </Button>
           </DialogFooter>
         </Form>

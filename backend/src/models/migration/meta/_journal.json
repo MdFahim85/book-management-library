@@ -64,6 +64,13 @@
       "when": 1766315135418,
       "tag": "0008_romantic_black_tom",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1766389206630,
+      "tag": "0009_striped_mentor",
+      "breakpoints": true
     }
   ]
 }

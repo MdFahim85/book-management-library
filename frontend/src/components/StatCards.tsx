@@ -1,19 +1,22 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useLocation } from "react-router-dom";
 
 import { BookCopy, UserRoundPen } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 import { EMPTY_ARRAY } from "../misc";
+import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import { useT } from "../types/i18nTypes";
 
 import type { getAuthors } from "@backend/controllers/authors";
 import type { getBooks } from "@backend/controllers/books";
 import type { GetRes } from "@backend/types/req-res";
-import { Link, useLocation } from "react-router-dom";
-import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
 
 function StatCards() {
+  const t = useT();
+
   const location = useLocation();
 
   const active: "books" | "authors" = location.pathname.startsWith(
@@ -42,7 +45,7 @@ function StatCards() {
     <Card className="mt-2">
       <CardHeader>
         <CardTitle>
-          <p className="text-2xl">Overview</p>
+          <p className="text-2xl">{t("navigation.overview")}</p>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -64,7 +67,7 @@ function StatCards() {
                 <div className="flex items-center justify-between">
                   <div className="grid gap-4 ">
                     <p className="text-xl text-neutral-800 dark:text-neutral-100">
-                      Total Books
+                      {t("dashboard.totalBooks")}
                     </p>
                     <p className="text-4xl font-bold"> {books.length}</p>
                   </div>
@@ -88,7 +91,7 @@ function StatCards() {
                 <div className="flex items-center justify-between">
                   <div className="grid gap-4 ">
                     <p className="text-xl text-neutral-800 dark:text-neutral-100">
-                      Total Authors
+                      {t("dashboard.totalAuthors")}
                     </p>
                     <p className="text-4xl font-bold"> {authors.length}</p>
                   </div>

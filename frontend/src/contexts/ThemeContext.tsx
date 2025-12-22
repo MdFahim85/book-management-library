@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useUserContext } from "./UserContext";
-import LoadingPage from "../components/Loading";
 import { QueryClient, useMutation } from "@tanstack/react-query";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
@@ -34,7 +33,7 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const queryClient = new QueryClient();
-  const { user, isLoading } = useUserContext();
+  const { user } = useUserContext();
   const [localTheme, setLocalTheme] = useState<Theme | null>(null);
   const theme = localTheme ?? (user?.theme || defaultTheme);
 
@@ -89,10 +88,6 @@ export function ThemeProvider({
       mutateUserTheme();
     },
   };
-
-  if (isLoading) {
-    return <LoadingPage />;
-  }
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>

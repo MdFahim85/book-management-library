@@ -13,10 +13,13 @@ import {
 
 import { API_URL } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import { useT } from "../types/i18nTypes";
 
 import type { Book } from "@backend/models/Book";
 
 export default function BookPdfReader({ book }: { book: Book }) {
+  const t = useT();
+
   const [numPages, setNumPages] = useState(0);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
@@ -28,7 +31,7 @@ export default function BookPdfReader({ book }: { book: Book }) {
       <DialogTrigger asChild>
         <Button type="button">
           <Eye className="mr-2 h-4 w-4" />
-          Read Book
+          {t("books.read")}
         </Button>
       </DialogTrigger>
 
@@ -43,7 +46,9 @@ export default function BookPdfReader({ book }: { book: Book }) {
         <DialogHeader>
           <DialogTitle>
             <div className="flex justify-between items-center pt-6">
-              <h1 className="text-xl">Title : {book.name}</h1>
+              <h1 className="text-xl">
+                {t("books.title")} : {book.name}
+              </h1>
               <Button type="button">
                 <a
                   href={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}
@@ -51,7 +56,7 @@ export default function BookPdfReader({ book }: { book: Book }) {
                   download
                   className="flex items-center gap-4"
                 >
-                  <Download /> Download book
+                  <Download /> {t("books.download")}
                 </a>
               </Button>
             </div>

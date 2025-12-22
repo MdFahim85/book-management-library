@@ -1,26 +1,30 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
+import { Trash } from "lucide-react";
 import {
   AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
   AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "./ui/alert-dialog";
-import { Trash } from "lucide-react";
-import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
 
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import { useT } from "../types/i18nTypes";
 
 import type { deleteAuthor } from "@backend/controllers/authors";
 import type { GetRes } from "@backend/types/req-res";
 
 export default function DeleteAuthorModal({ id }: { id: number }) {
+  const t = useT();
+
   const queryClient = useQueryClient();
 
   const { mutate: mutateDeleteAuthor, isPending: isDeleting } = useMutation({
@@ -51,24 +55,24 @@ export default function DeleteAuthorModal({ id }: { id: number }) {
       <AlertDialogTrigger asChild>
         <Button variant="destructive">
           <Trash />
-          Delete
+          {t("actions.delete")}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>{t("dialogs.confirmation")}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action will delete the author from database
+            {t("dialogs.deleteAuthor")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t("actions.cancel")}</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => mutateDeleteAuthor(id)}
             disabled={isDeleting}
             className="bg-red-400 hover:bg-red-600"
           >
-            Delete
+            {t("actions.delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

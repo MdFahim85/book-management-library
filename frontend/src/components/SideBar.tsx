@@ -2,23 +2,25 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 
-import { Button } from "./ui/button";
 import { Book, BookA, LogOut, User } from "lucide-react";
+import { Button } from "./ui/button";
 
 import { useUserContext } from "../contexts/UserContext";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import { useT } from "../types/i18nTypes";
+import EditUserModal from "./EditUserModal";
+import LanguageToggle from "./LanguageToggle";
+import { ModeToggle } from "./ModeToggle";
 
 import type { userLogout } from "@backend/controllers/user";
 import type { GetRes } from "@backend/types/req-res";
-import LoadingPage from "./Loading";
-import EditUserModal from "./EditUserModal";
-import { ModeToggle } from "./ModeToggle";
 
 export default function SideBar() {
+  const t = useT();
   const queryClient = useQueryClient();
 
-  const { user, isLoading } = useUserContext();
+  const { user } = useUserContext();
 
   const { mutate: logOut, isPending: isLoggingOut } = useMutation({
     mutationFn: () =>
@@ -39,10 +41,6 @@ export default function SideBar() {
     throwOnError: true,
   });
 
-  if (isLoading) {
-    return <LoadingPage />;
-  }
-
   if (!user) {
     return <></>;
   }
@@ -55,9 +53,12 @@ export default function SideBar() {
             className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
           >
             <BookA className="w-6 h-6" />
-            <h1 className="text-lg font-semibold">Book Library Management</h1>
+            <h1 className="text-lg font-semibold">{t("app.title")}</h1>
           </Link>
-          <ModeToggle />
+          <div className="flex gap-2 items-center">
+            <ModeToggle />
+            <LanguageToggle />
+          </div>
         </div>
 
         <nav className="px-3 mt-8">
@@ -68,7 +69,10 @@ export default function SideBar() {
                 className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 <Book className="w-5 h-5" />
-                <span className="text-base font-medium">Books</span>
+                <span className="text-base font-medium">
+                  {" "}
+                  {t("navigation.books")}
+                </span>
               </Link>
             </li>
             <li>
@@ -77,7 +81,10 @@ export default function SideBar() {
                 className="flex items-center gap-4 px-4 py-3 rounded-lg text-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 <User className="w-5 h-5" />
-                <span className="text-base font-medium">Authors</span>
+                <span className="text-base font-medium">
+                  {" "}
+                  {t("navigation.authors")}
+                </span>
               </Link>
             </li>
           </ul>
@@ -97,7 +104,7 @@ export default function SideBar() {
                 disabled={isLoggingOut}
               >
                 <LogOut />
-                Logout
+                {t("actions.logout")}
               </Button>
             </div>
           </div>

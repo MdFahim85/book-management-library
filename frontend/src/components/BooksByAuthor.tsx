@@ -7,9 +7,10 @@ import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import BookCard from "./BookCard";
 
-import type { getAuthorById } from "@backend/controllers/authors";
+import type { getAuthorDetailsById } from "@backend/controllers/authors";
 import type { getBooksByAuthorId } from "@backend/controllers/books";
 import type { GetRes } from "@backend/types/req-res";
+import { t } from "../types/i18nTypes";
 
 function BooksByAuthor() {
   const { authorId } =
@@ -35,7 +36,7 @@ function BooksByAuthor() {
       authorId,
     ],
     queryFn: () =>
-      modifiedFetch<GetRes<typeof getAuthorById>>(
+      modifiedFetch<GetRes<typeof getAuthorDetailsById>>(
         Server_ROUTEMAP.authors.getById.replace(
           Server_ROUTEMAP.authors._params.id,
           (authorId || "-1")?.toString()
@@ -61,7 +62,7 @@ function BooksByAuthor() {
           })
         ) : (
           <div className="pt-4 text-2xl text-center text-red-400">
-            No books found
+            {t("table.noResults")}
           </div>
         )}
       </div>

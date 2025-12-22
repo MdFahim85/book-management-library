@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Edit } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
+
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -17,6 +18,7 @@ import { Label } from "./ui/label";
 
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import { useT } from "../types/i18nTypes";
 import Form from "./Form";
 
 import type { editAuthor } from "@backend/controllers/authors";
@@ -24,6 +26,8 @@ import type { Author } from "@backend/models/Author";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 function EditAuthorModal({ author }: { author: Author }) {
+  const t = useT();
+
   const queryClient = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -65,7 +69,7 @@ function EditAuthorModal({ author }: { author: Author }) {
           onClick={() => setModalOpen(true)}
         >
           <Edit />
-          Edit
+          {t("actions.edit")}
         </Button>
       </DialogTrigger>
 
@@ -76,11 +80,11 @@ function EditAuthorModal({ author }: { author: Author }) {
           }}
         >
           <DialogHeader className="pb-4">
-            <DialogTitle>Edit Author</DialogTitle>
+            <DialogTitle> {t("authors.edit")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 pb-4">
             <div className="grid gap-3">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{t("authors.name")}</Label>
               <Input
                 id="name"
                 name="name"
@@ -94,14 +98,14 @@ function EditAuthorModal({ author }: { author: Author }) {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                {t("actions.cancel")}
               </Button>
             </DialogClose>
             <Button
               type="submit"
               disabled={updatedAuthor === author || isEditing}
             >
-              {isEditing ? "Editing..." : "Edit Author"}
+              {isEditing ? `${t("actions.editing")}` : `${t("actions.edit")}`}
             </Button>
           </DialogFooter>
         </Form>

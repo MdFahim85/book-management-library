@@ -7,6 +7,7 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
+
 import { Button } from "../../components/ui/button";
 import { Card, CardHeader, CardTitle } from "../../components/ui/card";
 import {
@@ -32,23 +33,30 @@ import BookCard from "../../components/BookCard";
 import StatCards from "../../components/StatCards";
 import { EMPTY_ARRAY } from "../../misc";
 import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
+import i18n from "../../misc/i18n";
 import { modifiedFetch } from "../../misc/modifiedFetch";
+import { useT } from "../../types/i18nTypes";
 
 import type { getAuthors } from "@backend/controllers/authors";
 import type { getBooks } from "@backend/controllers/books";
 import type { Book } from "@backend/models/Book";
 import type { GetRes } from "@backend/types/req-res";
 
-const columns: ColumnDef<Book>[] = [
+const getColumns = (
+  t: ReturnType<typeof useT>,
+  locale: string
+): ColumnDef<Book>[] => [
   {
     id: "serial",
-    header: "S/N",
+    header: t("table.serialNumber"),
     cell: ({ row, table }) => {
       const pageIndex = table.getState().pagination.pageIndex;
       const pageSize = table.getState().pagination.pageSize;
+      const value = pageIndex * pageSize + row.index + 1;
+
       return (
         <div className="w-10 font-bold text-center">
-          {pageIndex * pageSize + row.index + 1}
+          {new Intl.NumberFormat(locale).format(value)}
         </div>
       );
     },
@@ -56,13 +64,17 @@ const columns: ColumnDef<Book>[] = [
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: t("forms.name"),
     cell: ({ row }) => <BookCard book={row.original} />,
   },
 ];
 
 function Books() {
+  const t = useT();
+
   const [selectedAuthorId, setSelectedAuthorId] = useState<number>();
+
+  const columns = useMemo(() => getColumns(t, i18n.language), [t]);
 
   const { data: authors = EMPTY_ARRAY } = useSuspenseQuery({
     queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
@@ -102,7 +114,7 @@ function Books() {
       <Card className="my-4">
         <CardHeader>
           <CardTitle className="text-4xl font-bold text-neutral-800 dark:text-neutral-100 mb-6">
-            Books Management
+            {t("books.management")}
           </CardTitle>
           <div className="flex items-center gap-4 justify-between me-4">
             <div className="flex gap-4">
@@ -111,13 +123,17 @@ function Books() {
                 onValueChange={(value) => setSelectedAuthorId(parseInt(value))}
                 disabled={!authors.length}
               >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by author" />
+                <SelectTrigger>
+                  <SelectValue placeholder={t("books.filterByAuthor")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Author</SelectLabel>
-                    {[<SelectItem value="NaN">All</SelectItem>].concat(
+                    {[
+                      <SelectItem value="NaN">
+                        {t("books.filterByAuthor")}
+                      </SelectItem>,
+                    ].concat(
                       authors.map((author) => (
                         <SelectItem
                           value={author.id.toString()}
@@ -136,7 +152,7 @@ function Books() {
                 onClick={() => setSelectedAuthorId(undefined)}
                 disabled={!authors.length || !selectedAuthorId}
               >
-                Clear
+                {t("actions.clear")}
               </Button>
             </div>
             <AddBookModal />
@@ -184,7 +200,7 @@ function Books() {
                     colSpan={columns.length}
                     className="h-24 text-center text-red-400 text-xl"
                   >
-                    No results.
+                    {t("table.noResults")}
                   </TableCell>
                 </TableRow>
               )}
@@ -197,7 +213,7 @@ function Books() {
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
             >
-              Previous
+              {t("table.prev")}
             </Button>
             <Button
               variant="outline"
@@ -205,7 +221,7 @@ function Books() {
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
             >
-              Next
+              {t("table.next")}
             </Button>
           </div>
         </CardHeader>

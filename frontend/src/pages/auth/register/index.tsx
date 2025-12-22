@@ -21,11 +21,14 @@ import Client_ROUTEMAP from "../../../misc/Client_ROUTEMAP";
 import { initialUserRegisterState } from "../../../misc/initialStates";
 import { modifiedFetch } from "../../../misc/modifiedFetch";
 import Server_ROUTEMAP from "../../../misc/Server_ROUTEMAP";
+import { useT } from "../../../types/i18nTypes";
 
 import type { userRegister } from "@backend/controllers/user";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function Register() {
+  const t = useT();
+
   const queryClient = useQueryClient();
   const [user, setUser] = useState(initialUserRegisterState);
   const [showPass, setShowPass] = useState(false);
@@ -59,13 +62,13 @@ export default function Register() {
     <div className="flex justify-center items-center h-full w-full">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Register a new account</CardTitle>
-          <CardDescription>Enter your email below to register</CardDescription>
+          <CardTitle>{t("auth.registerTitle")}</CardTitle>
+          <CardDescription>{t("auth.registerSubtitle")}</CardDescription>
           <CardAction>
             <Link
               to={Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.login}
             >
-              <Button variant="link">Login</Button>
+              <Button variant="link">{t("actions.login")}</Button>
             </Link>
           </CardAction>
         </CardHeader>
@@ -81,7 +84,7 @@ export default function Register() {
           >
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("forms.email")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -95,7 +98,7 @@ export default function Register() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
+                <Label htmlFor="name">{t("forms.name")}</Label>
                 <Input
                   id="name"
                   type="text"
@@ -110,7 +113,7 @@ export default function Register() {
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t("forms.password")}</Label>
                 </div>
                 <div className="relative">
                   <Input
@@ -136,7 +139,9 @@ export default function Register() {
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Label htmlFor="confirmPassword">
+                    {t("forms.confirmPassword")}
+                  </Label>
                 </div>
                 <Input
                   id="confirmPassword"
@@ -162,7 +167,7 @@ export default function Register() {
                 className="w-full"
                 disabled={initialUserRegisterState === user || isRegistering}
               >
-                Register
+                {t("actions.register")}
               </Button>
             </div>
           </Form>

@@ -6,7 +6,7 @@ import z from "zod";
 import { db } from "../config/database";
 
 export const themeEnum = pgEnum("theme", ["light", "dark", "system"]);
-export const languageEnum = pgEnum("language", ["english", "bangla"]);
+export const languageEnum = pgEnum("language", ["english", "বাংলা"]);
 
 // User Schema
 export const user = pgTable("users", {
@@ -25,7 +25,7 @@ export const addUserSchema = createInsertSchema(user, {
   password: (schema) => schema.min(6).max(255),
   email: () => z.email().max(255),
   theme: () => z.enum(["light", "dark", "system"]),
-  language: () => z.enum(["english", "bangla"]),
+  language: () => z.enum(["english", "বাংলা"]),
 });
 export const updateUserSchema = createUpdateSchema(user, {
   id: (schema) => schema.transform(() => undefined),
@@ -33,7 +33,7 @@ export const updateUserSchema = createUpdateSchema(user, {
   password: (schema) => schema.min(6).max(255),
   email: () => z.email().max(255),
   theme: () => z.enum(["light", "dark", "system"]),
-  language: () => z.enum(["english", "bangla"]),
+  language: () => z.enum(["english", "বাংলা"]),
 });
 
 // User type
@@ -43,7 +43,7 @@ export type UserWithOutPassword = Omit<User, "password">;
 
 // User Model
 export default class UserModel {
-  // Get user by email
+  // Get user বাংলাy email
   static getUserByEmail = async (email: string, dbOrTx: DbOrTx = db) => {
     const users = await dbOrTx
       .select()

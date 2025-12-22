@@ -32,6 +32,7 @@ import {
 import { EMPTY_ARRAY } from "../misc";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import { useT } from "../types/i18nTypes";
 import Form from "./Form";
 
 import type { getAuthors } from "@backend/controllers/authors";
@@ -40,6 +41,8 @@ import type { Book } from "@backend/models/Book";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 function EditBookModal({ book }: { book: Book }) {
+  const t = useT();
+
   const queryClient = useQueryClient();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -99,7 +102,7 @@ function EditBookModal({ book }: { book: Book }) {
           onClick={() => setModalOpen(true)}
         >
           <Edit />
-          Edit
+          {t("actions.edit")}
         </Button>
       </DialogTrigger>
 
@@ -110,11 +113,11 @@ function EditBookModal({ book }: { book: Book }) {
           }}
         >
           <DialogHeader className="pb-4">
-            <DialogTitle>Edit Book</DialogTitle>
+            <DialogTitle>{t("books.edit")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{t("books.title")}</Label>
               <Input
                 id="name"
                 name="name"
@@ -125,7 +128,7 @@ function EditBookModal({ book }: { book: Book }) {
               />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="author">Select an Author</Label>
+              <Label htmlFor="author">{t("authors.name")}</Label>
               <Select
                 value={updatedBook.authorId?.toString()}
                 onValueChange={(value) =>
@@ -137,11 +140,11 @@ function EditBookModal({ book }: { book: Book }) {
                 disabled={!authors.length}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select an author" />
+                  <SelectValue placeholder={t("authors.name")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Authors</SelectLabel>
+                    <SelectLabel>{t("forms.name")}</SelectLabel>
                     {authors.map((author) => (
                       <SelectItem value={author.id.toString()} key={author.id}>
                         {author.name}
@@ -152,7 +155,7 @@ function EditBookModal({ book }: { book: Book }) {
               </Select>
             </div>
             <div className="grid gap-3 mb-4">
-              <Label htmlFor="name">Upload a PDF</Label>
+              <Label htmlFor="name">{t("forms.uploadPdf")}</Label>
               <Input
                 id="bookPdf"
                 name="bookPdf"
@@ -167,14 +170,14 @@ function EditBookModal({ book }: { book: Book }) {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                {t("actions.cancel")}
               </Button>
             </DialogClose>
             <Button
               type="submit"
               disabled={updatedBook === book || isEditing || !authors.length}
             >
-              {isEditing ? "Editing..." : "Edit Book"}
+              {isEditing ? `${t("actions.editing")}` : `${t("actions.edit")}`}
             </Button>
           </DialogFooter>
         </Form>

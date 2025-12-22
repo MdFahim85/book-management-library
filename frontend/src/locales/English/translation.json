@@ -1,0 +1,98 @@
+{
+  "app": {
+    "title": "Book Management Library"
+  },
+
+  "error": {
+    "notFound": "ERROR 404 - Page not found"
+  },
+
+  "navigation": {
+    "books": "Books",
+    "authors": "Authors",
+    "overview": "Overview",
+    "backToBooks": "Back to Books",
+    "backToAuthors": "Back to Authors",
+    "backToHome": "Go back to Homepage",
+    "goBack": "Go Back"
+  },
+
+  "dashboard": {
+    "totalBooks": "Total Books",
+    "totalAuthors": "Total Authors"
+  },
+
+  "books": {
+    "management": "Books Management",
+    "add": "Add Book",
+    "edit": "Edit Book",
+    "details": "Book Details",
+    "title": "Book Title",
+    "read": "Read Book",
+    "download": "Download Book",
+    "filterByAuthor": "Filter By Author"
+  },
+
+  "authors": {
+    "management": "Authors Management",
+    "add": "Add Author",
+    "edit": "Edit Author",
+    "details": "Author Details",
+    "name": "Author Name"
+  },
+
+  "forms": {
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "selectAuthor": "Select an Author",
+    "uploadPdf": "Upload a PDF",
+    "selectPdf": "Please select a PDF"
+  },
+
+  "actions": {
+    "add": "Add",
+    "adding": "Adding...",
+    "edit": "Edit",
+    "editing": "Editing...",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+
+  "auth": {
+    "loginTitle": "Login to your account",
+    "loginSubtitle": "Enter your credentials below to login",
+    "registerTitle": "Register a new account",
+    "registerSubtitle": "Enter your email below to register"
+  },
+
+  "user": {
+    "edit": "Edit User",
+    "profile": "User Profile",
+    "createdBy": "Created By"
+  },
+
+  "table": {
+    "serialNumber": "S/N",
+    "noResults": "No results",
+    "prev": "Prev",
+    "next": "Next"
+  },
+
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+
+  "dialogs": {
+    "confirmation": "Are you absolutely sure?",
+    "deleteAuthor": "This action will delete the author from the database",
+    "deleteBook": "This action will delete the book from the database"
+  }
+}

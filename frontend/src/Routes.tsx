@@ -12,7 +12,7 @@ const RegisterLazy = lazy(() => import("./pages/auth/register/index"));
 const LoginLazy = lazy(() => import("./pages/auth/login/index"));
 
 const AuthorsLazy = lazy(() => import("./pages/authors/index"));
-const AuthorDetailsLazy = lazy(() => import("./pages/authors/AuthorDetails"));
+const AuthorDetailsLazy = lazy(() => import("./pages/authors/authorDetails"));
 
 const BooksLazy = lazy(() => import("./pages/books/index"));
 const BookDetailsLazy = lazy(() => import("./pages/books/bookDetails"));

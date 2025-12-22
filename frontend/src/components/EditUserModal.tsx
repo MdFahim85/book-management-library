@@ -19,6 +19,7 @@ import { Input } from "./ui/input";
 import { useUserContext } from "../contexts/UserContext";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import { useT } from "../types/i18nTypes";
 import Form from "./Form";
 import LoadingPage from "./Loading";
 
@@ -26,6 +27,8 @@ import type { editUser } from "@backend/controllers/user";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function EditUserModal() {
+  const t = useT();
+
   const queryClient = useQueryClient();
   const { user, isLoading } = useUserContext();
 
@@ -82,11 +85,11 @@ export default function EditUserModal() {
           }}
         >
           <DialogHeader className="pb-4">
-            <DialogTitle>Edit User</DialogTitle>
+            <DialogTitle>{t("user.edit")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 pb-4">
             <div className="grid gap-3">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{t("forms.name")}</Label>
               <Input
                 id="name"
                 name="name"
@@ -97,7 +100,7 @@ export default function EditUserModal() {
               />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t("forms.email")}</Label>
               <Input
                 id="email"
                 name="email"
@@ -111,11 +114,11 @@ export default function EditUserModal() {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                {t("actions.cancel")}
               </Button>
             </DialogClose>
             <Button type="submit" disabled={isEditing}>
-              {isEditing ? "Editing..." : "Edit User"}
+              {isEditing ? `${t("actions.editing")}` : `${t("actions.edit")}`}
             </Button>
           </DialogFooter>
         </Form>

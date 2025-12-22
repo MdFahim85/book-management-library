@@ -36,6 +36,7 @@ import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import Form from "./Form";
 import LoadingPage from "./Loading";
+import { useT } from "../types/i18nTypes";
 
 import type { getAuthors } from "@backend/controllers/authors";
 import type { addBook } from "@backend/controllers/books";
@@ -43,6 +44,8 @@ import type { Book } from "@backend/models/Book";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function AddBookModal() {
+  const t = useT();
+
   const queryClient = useQueryClient();
   const { user, isLoading } = useUserContext();
 
@@ -61,7 +64,7 @@ export default function AddBookModal() {
   const { mutate: addNewBook, isPending: isAdding } = useMutation({
     mutationFn: async () => {
       if (!bookPdf) {
-        toast.error("Please select a pdf");
+        toast.error(`${t("forms.selectPdf")}`);
         return;
       }
 
@@ -112,7 +115,7 @@ export default function AddBookModal() {
           onClick={() => setModalOpen(true)}
         >
           <Plus />
-          Add Book
+          {t("books.add")}
         </Button>
       </DialogTrigger>
 
@@ -124,11 +127,11 @@ export default function AddBookModal() {
           }}
         >
           <DialogHeader className="pb-4">
-            <DialogTitle>Add a New Book</DialogTitle>
+            <DialogTitle>{t("books.add")}</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4">
             <div className="grid gap-3">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{t("books.title")}</Label>
               <Input
                 id="name"
                 name="name"
@@ -139,7 +142,7 @@ export default function AddBookModal() {
               />
             </div>
             <div className="grid gap-3">
-              <Label htmlFor="author">Select an Author</Label>
+              <Label htmlFor="author">{t("authors.name")}</Label>
               <Select
                 onValueChange={(value) =>
                   setBook(() => ({ ...book, authorId: parseInt(value) }))
@@ -147,11 +150,11 @@ export default function AddBookModal() {
                 disabled={!authors.length}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select an author" />
+                  <SelectValue placeholder={t("forms.name")} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Authors</SelectLabel>
+                    <SelectLabel>{t("authors.name")}</SelectLabel>
                     {authors.map((author) => (
                       <SelectItem value={author.id.toString()} key={author.id}>
                         {author.name}
@@ -162,7 +165,7 @@ export default function AddBookModal() {
               </Select>
             </div>
             <div className="grid gap-3 mb-4">
-              <Label htmlFor="name">Upload a PDF</Label>
+              <Label htmlFor="name">{t("forms.uploadPdf")}</Label>
               <Input
                 id="bookPdf"
                 name="bookPdf"
@@ -177,7 +180,7 @@ export default function AddBookModal() {
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
-                Cancel
+                {t("actions.cancel")}
               </Button>
             </DialogClose>
             <Button
@@ -186,7 +189,7 @@ export default function AddBookModal() {
                 initialBookState === book || isAdding || !authors.length
               }
             >
-              {isAdding ? "Adding..." : "Add Book"}
+              {isAdding ? `${t("actions.adding")}` : `${t("actions.add")}`}
             </Button>
           </DialogFooter>
         </Form>

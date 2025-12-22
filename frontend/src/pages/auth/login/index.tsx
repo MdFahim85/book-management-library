@@ -21,11 +21,14 @@ import Client_ROUTEMAP from "../../../misc/Client_ROUTEMAP";
 import { initialUserLoginState } from "../../../misc/initialStates";
 import { modifiedFetch } from "../../../misc/modifiedFetch";
 import Server_ROUTEMAP from "../../../misc/Server_ROUTEMAP";
+import { useT } from "../../../types/i18nTypes";
 
 import type { userLogin } from "@backend/controllers/user";
 import type { GetReqBody, GetRes } from "@backend/types/req-res";
 
 export default function Login() {
+  const t = useT();
+
   const queryClient = useQueryClient();
 
   const [user, setUser] = useState(initialUserLoginState);
@@ -60,17 +63,15 @@ export default function Login() {
     <div className="flex justify-center items-center h-full w-full">
       <Card className="w-full max-w-lg">
         <CardHeader>
-          <CardTitle>Login in to your account</CardTitle>
-          <CardDescription>
-            Enter your credentials below to Login
-          </CardDescription>
+          <CardTitle>{t("auth.loginTitle")}</CardTitle>
+          <CardDescription>{t("auth.loginSubtitle")}</CardDescription>
           <CardAction>
             <Link
               to={
                 Client_ROUTEMAP.auth.root + "/" + Client_ROUTEMAP.auth.register
               }
             >
-              <Button variant="link">Register</Button>
+              <Button variant="link">{t("actions.register")}</Button>
             </Link>
           </CardAction>
         </CardHeader>
@@ -78,7 +79,7 @@ export default function Login() {
           <Form onSubmit={() => loginUser()}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t("forms.email")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -94,7 +95,7 @@ export default function Login() {
 
               <div className="grid gap-2">
                 <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t("forms.password")}</Label>
                 </div>
                 <div className="relative">
                   <Input
@@ -130,7 +131,7 @@ export default function Login() {
                 className="w-full"
                 disabled={initialUserLoginState === user || isLogginIn}
               >
-                Login
+                {t("actions.login")}
               </Button>
             </div>
           </Form>

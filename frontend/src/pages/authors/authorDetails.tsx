@@ -14,15 +14,19 @@ import {
 import DeleteAuthorModal from "../../components/DeleteAuthorModal";
 import EditAuthorModal from "../../components/EditAuthorModal";
 import LoadingPage from "../../components/Loading";
+import NotFound from "../../components/NotFound";
 import { useUserContext } from "../../contexts/UserContext";
 import Client_ROUTEMAP from "../../misc/Client_ROUTEMAP";
 import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
 import { modifiedFetch } from "../../misc/modifiedFetch";
+import { useT } from "../../types/i18nTypes";
 
 import type { getAuthorDetailsById } from "@backend/controllers/authors";
 import type { GetRes } from "@backend/types/req-res";
 
 export default function AuthorDetails() {
+  const t = useT();
+
   const { id } = useParams<(typeof Client_ROUTEMAP)["authors"]["_params"]>();
 
   const { user, isLoading } = useUserContext();
@@ -47,31 +51,23 @@ export default function AuthorDetails() {
   }
 
   if (!author) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Card className="max-w-2xl mx-auto">
-          <CardContent className="pt-6">
-            <p className="text-center text-red-500">Author not found</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <NotFound />;
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-3xl mx-auto">
+      <div className="mx-auto">
         <Link to={Client_ROUTEMAP.authors.root}>
           <Button variant="ghost" className="mb-6">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Authors
+            {t("navigation.backToAuthors")}
           </Button>
         </Link>
 
         <Card>
           <CardHeader className="border-b">
             <CardTitle className="text-3xl font-bold text-neutral-800 dark:text-neutral-100">
-              Author Details
+              {t("authors.details")}
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6">
@@ -82,7 +78,7 @@ export default function AuthorDetails() {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-muted-foreground mb-1">
-                    Author Name
+                    {t("authors.name")}
                   </p>
                   <p className="text-2xl font-semibold text-neutral-800 dark:text-neutral-100">
                     {author.name}
@@ -95,7 +91,7 @@ export default function AuthorDetails() {
                 </div>
                 <div className="flex-1">
                   <p className="text-sm font-medium text-muted-foreground mb-1">
-                    Created By
+                    {t("user.createdBy")}
                   </p>
                   <p className="text-lg text-neutral-700 dark:text-neutral-200">
                     {author.createdByName}

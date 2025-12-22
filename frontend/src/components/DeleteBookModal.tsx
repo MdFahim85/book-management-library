@@ -17,11 +17,14 @@ import { Button } from "./ui/button";
 
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
+import { useT } from "../types/i18nTypes";
 
 import type { deleteBook } from "@backend/controllers/books";
 import type { GetRes } from "@backend/types/req-res";
 
 export default function DeleteBookModal({ id }: { id: number }) {
+  const t = useT();
+
   const queryClient = useQueryClient();
   const { mutate: mutateDeleteBook, isPending: isDeleting } = useMutation({
     mutationFn: (id: number) =>
@@ -46,24 +49,24 @@ export default function DeleteBookModal({ id }: { id: number }) {
       <AlertDialogTrigger asChild>
         <Button variant="destructive">
           <Trash />
-          Delete
+          {t("actions.delete")}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          <AlertDialogTitle>{t("dialogs.confirmation")}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action will delete the book from database
+            {t("dialogs.deleteBook")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t("actions.cancel")}</AlertDialogCancel>
           <AlertDialogAction
             onClick={() => mutateDeleteBook(id)}
             disabled={isDeleting}
             className="bg-red-400 hover:bg-red-600"
           >
-            Delete
+            {t("actions.delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

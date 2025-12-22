@@ -9,7 +9,11 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
+import { useT } from "../types/i18nTypes";
+
 export function ModeToggle() {
+  const t = useT();
+
   const { setTheme } = useTheme();
 
   return (
@@ -23,13 +27,13 @@ export function ModeToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          <SunIcon /> Light
+          <SunIcon /> {t("theme.light")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          <MoonIcon /> Dark
+          <MoonIcon /> {t("theme.dark")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
-          <PcCaseIcon /> System
+          <PcCaseIcon /> {t("theme.system")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
