@@ -63,7 +63,7 @@ export default function BookPdfReader({ book }: { book: Book }) {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto rounded-md border dark:invert dark:hue-rotate-180">
+        <div className="flex-1 overflow-y-auto rounded-md border dark:invert dark:hue-rotate-180 bg-neutral-300">
           <center>
             <Document
               file={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}

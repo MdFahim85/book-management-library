@@ -42,7 +42,7 @@ function StatCards() {
   });
 
   return (
-    <Card className="mt-2">
+    <Card className="mt-2 ">
       <CardHeader>
         <CardTitle>
           <p className="text-2xl">{t("navigation.overview")}</p>

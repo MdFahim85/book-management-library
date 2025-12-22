@@ -45,7 +45,7 @@ export default function SideBar() {
     return <></>;
   }
   return (
-    <aside className="h-full bg-background border-r border-border flex flex-col justify-between pb-4">
+    <aside className="h-full bg-white dark:bg-neutral-900 border border-border flex flex-col justify-between pb-4 rounded-lg">
       <div>
         <div className="p-6 flex justify-between">
           <Link
