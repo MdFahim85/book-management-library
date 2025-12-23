@@ -13,10 +13,10 @@ import { generateAccessToken, passwordChecker, passwordHash } from "../utils";
 import { jwtToken } from "../config";
 
 // Get self
-export const getSelf: RequestHandler<
-  {},
-  Omit<User,"password">
-> = (req, res) => {
+export const getSelf: RequestHandler<{}, Omit<User, "password">> = (
+  req,
+  res
+) => {
   res.send(req.user);
 };
 
@@ -28,7 +28,7 @@ export const userLogout: RequestHandler<{}, { message: string }> = async (
   // Clear token from cookies
   res.clearCookie(jwtToken);
 
-  res.json({ message: "Logged out successfully" });
+  res.json({ message: "auth.logoutSuccess" });
 };
 
 // User Login
@@ -42,11 +42,11 @@ export const userLogin: RequestHandler<
 
   // User lookup and throw on failed query
   const user = await UserModel.getUserByEmail(email);
-  if (!user) throw new ResponseError("No user found", status.NOT_FOUND);
+  if (!user) throw new ResponseError("user.notFound", status.NOT_FOUND);
 
   // Password checker
   const match = await passwordChecker(password, user.password);
-  if (!match) throw new ResponseError("Wrong credentials", status.UNAUTHORIZED);
+  if (!match) throw new ResponseError("auth.wrongCreds", status.UNAUTHORIZED);
 
   // JWT token generation and setting cookie
   const token = generateAccessToken(user.id);
@@ -56,7 +56,7 @@ export const userLogin: RequestHandler<
     secure: true,
   });
 
-  res.json({ message: "Logged in successfully" });
+  res.json({ message: "auth.loginSuccess" });
 };
 
 // User registration
@@ -76,7 +76,7 @@ export const userRegister: RequestHandler<
   );
 
   // Throw on failed query
-  if (!user) throw new ResponseError("User not added", status.BAD_REQUEST);
+  if (!user) throw new ResponseError("user.userAddFail", status.BAD_REQUEST);
 
   // JWT token generation and setting cookie
   const token = generateAccessToken(user.id);
@@ -86,7 +86,7 @@ export const userRegister: RequestHandler<
     secure: true,
   });
 
-  res.status(201).json({ message: "Registration Successfull" });
+  res.status(201).json({ message: "auth.registerSuccess" });
 };
 
 // Update user
@@ -103,17 +103,14 @@ export const editUser: RequestHandler<
 
   // User lookup and throw on failed query
   const dbUser = await UserModel.getUserById(id);
-  if (!dbUser) throw new ResponseError("User not found", status.NOT_FOUND);
+  if (!dbUser) throw new ResponseError("user.notFound", status.NOT_FOUND);
 
   // If old and new password is provided
   if (oldPassword && userDetails.password) {
     const match = await passwordChecker(oldPassword, dbUser.password);
-    if (!match) throw new ResponseError("Password doesnt match");
+    if (!match) throw new ResponseError("auth.passMismatch");
     if (oldPassword === userDetails.password)
-      throw new ResponseError(
-        "New password cannot be same as old password",
-        status.CONFLICT
-      );
+      throw new ResponseError("auth.sameAsOldPass", status.CONFLICT);
     userDetails.password = await passwordHash(userDetails.password);
   } else {
     userDetails.password = dbUser.password;
@@ -126,10 +123,9 @@ export const editUser: RequestHandler<
   );
 
   // Throw on failed query
-  if (!user)
-    throw new ResponseError("Failed to update the user", status.BAD_REQUEST);
+  if (!user) throw new ResponseError("user.userEditFail", status.BAD_REQUEST);
 
-  res.json({ message: "User details has been updated" });
+  res.json({ message: "user.userEditSuccess" });
 };
 
 // Delete user
@@ -143,19 +139,19 @@ export const deleteUser: RequestHandler<
 
   const { password } = req.body;
   if (!password) {
-    throw new ResponseError("Please provide password", status.UNAUTHORIZED);
+    throw new ResponseError("auth.passRequired", status.UNAUTHORIZED);
   }
 
   // User lookup, password check and throw on failed query
   const dbUser = await UserModel.getUserById(id);
   if (dbUser) {
     const match = await passwordChecker(password, dbUser.password);
-    if (!match) throw new ResponseError("Password doesnt match");
+    if (!match) throw new ResponseError("auth.passMismatch");
   }
 
   const result = await UserModel.deleteUser(id);
   if (!result) {
-    throw new ResponseError("Failed to delete user", status.BAD_REQUEST);
+    throw new ResponseError("user.userDeleteFail", status.BAD_REQUEST);
   }
 
   res.json({ message: result });
@@ -181,10 +177,9 @@ export const editUserTheme: RequestHandler<
   );
 
   // Throw on failed query
-  if (!user)
-    throw new ResponseError("Failed to update the theme", status.BAD_REQUEST);
+  if (!user) throw new ResponseError("theme.failMsg", status.BAD_REQUEST);
 
-  res.json({ message: "User theme preference has been updated" });
+  res.json({ message: "theme.successMsg" });
 };
 
 // Update User Language

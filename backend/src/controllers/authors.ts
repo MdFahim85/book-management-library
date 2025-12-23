@@ -14,7 +14,6 @@ import ResponseError from "../utils/ResponseError";
 import { idValidator } from "../utils/validators";
 import path from "path";
 import config from "../config";
-import { User } from "../models/User";
 
 // Get all authors
 export const getAuthors: RequestHandler<{}, Author[]> = async (_, res) => {
@@ -36,7 +35,7 @@ export const getAuthorDetailsById: RequestHandler<
 
   // Author lookup
   const author = await AuthorModel.getAuthorDetailsById(id);
-  if (!author) throw new ResponseError("No author found", status.NOT_FOUND);
+  if (!author) throw new ResponseError("table.noResults", status.NOT_FOUND);
 
   res.json(author);
 };
@@ -53,9 +52,10 @@ export const addAuthor: RequestHandler<
   );
 
   // Throw on failed query
-  if (!author) throw new ResponseError("Author not added", status.BAD_REQUEST);
+  if (!author)
+    throw new ResponseError("authors.authorAddFail", status.BAD_REQUEST);
 
-  res.status(201).json({ message: "New author Added", data: author });
+  res.status(201).json({ message: "authors.authorAddSuccess", data: author });
 };
 
 // Edit author
@@ -70,14 +70,11 @@ export const editAuthor: RequestHandler<
 
   // Author lookup
   const oldAuthor = await AuthorModel.getAuthorById(id);
-  if (!oldAuthor) throw new ResponseError("No author found", status.NOT_FOUND);
+  if (!oldAuthor) throw new ResponseError("table.noResults", status.NOT_FOUND);
 
   // Update permission
   if (oldAuthor.createdBy !== user!.id)
-    throw new ResponseError(
-      "You are not creator of this author",
-      status.UNAUTHORIZED
-    );
+    throw new ResponseError("authors.notAuthorOwner", status.UNAUTHORIZED);
 
   // Author update
   const author = await AuthorModel.editAuthor(
@@ -87,9 +84,9 @@ export const editAuthor: RequestHandler<
 
   // Throw on failed query
   if (!author)
-    throw new ResponseError("Failed to update author", status.BAD_REQUEST);
+    throw new ResponseError("authors.authorEditFail", status.BAD_REQUEST);
 
-  res.json({ message: "Author has been updated", data: author });
+  res.json({ message: "authors.authorEditSuccess", data: author });
 };
 
 // Delete author
@@ -102,14 +99,11 @@ export const deleteAuthor: RequestHandler<
 
   // Author lookup
   const author = await AuthorModel.getAuthorById(id);
-  if (!author) throw new ResponseError("No author found", status.NOT_FOUND);
+  if (!author) throw new ResponseError("table.noResults", status.NOT_FOUND);
 
   // Delete permission
   if (author.createdBy !== user!.id)
-    throw new ResponseError(
-      "You are not the creator of this author",
-      status.UNAUTHORIZED
-    );
+    throw new ResponseError("authors.notAuthorOwner", status.UNAUTHORIZED);
 
   // Get books of author
   const books = await BookModel.getBooksByAuthorId(id);
@@ -129,7 +123,6 @@ export const deleteAuthor: RequestHandler<
 
   // Throw on failed query
   if (!deletedMessage)
-    throw new ResponseError("Failed to delete author", status.BAD_REQUEST);
-
-  res.json(deletedMessage);
+    throw new ResponseError("authors.authorDeleteFail", status.BAD_REQUEST);
+  res.json({ message: deletedMessage });
 };

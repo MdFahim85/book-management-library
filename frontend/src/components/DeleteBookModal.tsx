@@ -36,12 +36,13 @@ export default function DeleteBookModal({ id }: { id: number }) {
           ),
         { method: "delete" }
       ),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
       });
+      toast.success(t(data.message));
     },
-    onError: (error) => toast.error(error.message),
+    onError: (error) => toast.error(t(error.message)),
     throwOnError: true,
   });
   return (

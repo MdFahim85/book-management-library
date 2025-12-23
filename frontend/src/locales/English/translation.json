@@ -30,7 +30,14 @@
     "title": "Book Title",
     "read": "Read Book",
     "download": "Download Book",
-    "filterByAuthor": "Filter By Author"
+    "filterByAuthor": "Filter By Author",
+    "bookAddFail": "Book not added",
+    "bookAddSuccess": "New Book added",
+    "notbookOwner": "You are not creator of this Book",
+    "bookEditFail": "Failed to update Book",
+    "bookEditSuccess": "Book has been updated",
+    "bookDeleteFail": "Failed to delete Book",
+    "bookDeleteSuccess": "Book has been deleted"
   },
 
   "authors": {
@@ -38,7 +45,14 @@
     "add": "Add Author",
     "edit": "Edit Author",
     "details": "Author Details",
-    "name": "Author Name"
+    "name": "Author Name",
+    "authorAddFail": "Author not added",
+    "authorAddSuccess": "New Author added",
+    "notAuthorOwner": "You are not creator of this author",
+    "authorEditFail": "Failed to update author",
+    "authorEditSuccess": "Author has been updated",
+    "authorDeleteFail": "Failed to delete author",
+    "authorDeleteSuccess": "Author has been deleted"
   },
 
   "forms": {
@@ -68,13 +82,26 @@
     "loginTitle": "Login to your account",
     "loginSubtitle": "Enter your credentials below to login",
     "registerTitle": "Register a new account",
-    "registerSubtitle": "Enter your email below to register"
+    "registerSubtitle": "Enter your email below to register",
+    "loginSuccess": "Logged in successfully",
+    "registerSuccess": "Registration Successful",
+    "passMismatch": "Password doesnt match",
+    "sameAsOldPass": "New password cannot be same as old password",
+    "passRequired": "Please provide password",
+    "logoutSuccess": "Logged out successfully",
+    "wrongCreds": "Wrong credentials"
   },
 
   "user": {
     "edit": "Edit User",
     "profile": "User Profile",
-    "createdBy": "Created By"
+    "createdBy": "Created By",
+    "notFound": "No user found",
+    "userAddFail": "User not added",
+    "userEditFail": "Failed to update the user",
+    "userEditSuccess": "User details has been updated",
+    "userDeleteFail": "Failed to delete user",
+    "userDeleteSuccess": "User has been deleted"
   },
 
   "table": {
@@ -87,7 +114,9 @@
   "theme": {
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "failMsg": "Failed to update the theme",
+    "successMsg": "User theme preference has been updated"
   },
 
   "dialogs": {

@@ -49,12 +49,12 @@ export default function AddAuthorModal() {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
       });
-      if (data) toast.success(data.message);
+      if (data) toast.success(t(data.message));
       setAuthor(initialAuthorState);
       setModalOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(t(error.message));
     },
     throwOnError: true,
   });

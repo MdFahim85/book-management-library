@@ -104,6 +104,6 @@ export default class BookModel {
   static deleteBook = async (id: number, dbOrTx: DbOrTx = db) => {
     const result = await dbOrTx.delete(book).where(eq(book.id, id));
     if (!result.rowCount) return undefined;
-    return `Book with id ${id} deleted`;
+    return "books.bookDeleteSuccess";
   };
 }

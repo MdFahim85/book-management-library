@@ -52,11 +52,11 @@ function EditAuthorModal({ author }: { author: Author }) {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.authors.root + Server_ROUTEMAP.authors.get],
       });
-      if (data) toast.success(data.message);
+      if (data) toast.success(t(data.message));
       setModalOpen(false);
     },
     onError: (error) => {
-      alert(error.message);
+      toast.error(t(error.message));
     },
     throwOnError: true,
   });

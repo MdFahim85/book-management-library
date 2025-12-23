@@ -43,7 +43,7 @@ export type UserWithOutPassword = Omit<User, "password">;
 
 // User Model
 export default class UserModel {
-  // Get user বাংলাy email
+  // Get user by email
   static getUserByEmail = async (email: string, dbOrTx: DbOrTx = db) => {
     const users = await dbOrTx
       .select()
@@ -88,6 +88,6 @@ export default class UserModel {
   static deleteUser = async (id: number, dbOrTx: DbOrTx = db) => {
     const result = await dbOrTx.delete(user).where(eq(user.id, id));
     if (!result.rowCount) return undefined;
-    return `User with id ${id} deleted`;
+    return "user.userDeleteSuccess";
   };
 }

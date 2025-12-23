@@ -84,12 +84,12 @@ function EditBookModal({ book }: { book: Book }) {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
       });
-      if (data) toast.success(data.message);
+      if (data) toast.success(t(data.message));
       setUpdatedBook(data!.data);
       setModalOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(t(error.message));
     },
     throwOnError: true,
   });

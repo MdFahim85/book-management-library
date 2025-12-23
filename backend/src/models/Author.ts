@@ -90,6 +90,6 @@ export default class AuthorModel {
   static deleteAuthor = async (id: number) => {
     const result = await db.delete(author).where(eq(author.id, id));
     if (!result.rowCount) return undefined;
-    return `Author with id ${id} deleted`;
+    return "authors.authorDeleteSuccess";
   };
 }

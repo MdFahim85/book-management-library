@@ -30,7 +30,14 @@
     "title": "বইয়ের শিরোনাম",
     "read": "বই পড়ুন",
     "download": "বই ডাউনলোড করুন",
-    "filterByAuthor": "লেখক দ্বারা ফিল্টার করুন"
+    "filterByAuthor": "লেখক দ্বারা ফিল্টার করুন",
+    "bookAddFail": "বই যোগ করা হয়নি",
+    "bookAddSuccess": "নতুন বই যোগ করা হয়েছে",
+    "notbookOwner": "আপনি এই বইয়ের মালিক নন",
+    "bookEditFail": "বই আপডেট করতে ব্যর্থ",
+    "bookEditSuccess": "বই আপডেট হয়েছে",
+    "bookDeleteFail": "বই মুছে ফেলতে ব্যর্থ",
+    "bookDeleteSuccess": "বই মুছে ফেলা হয়েছে"
   },
 
   "authors": {
@@ -38,7 +45,14 @@
     "add": "নতুন লেখক যোগ করুন",
     "edit": "লেখক সম্পাদনা করুন",
     "details": "লেখক বিবরণ",
-    "name": "লেখকের নাম"
+    "name": "লেখকের নাম",
+    "authorAddFail": "লেখক যোগ করা হয়নি",
+    "authorAddSuccess": "নতুন লেখক যোগ করা হয়েছে",
+    "notAuthorOwner": "আপনি এই লেখকের মালিক নন",
+    "authorEditFail": "লেখক আপডেট করতে ব্যর্থ",
+    "authorEditSuccess": "লেখক আপডেট হয়েছে",
+    "authorDeleteFail": "লেখক মুছে ফেলতে ব্যর্থ",
+    "authorDeleteSuccess": "লেখক মুছে ফেলা হয়েছে"
   },
 
   "forms": {
@@ -68,13 +82,26 @@
     "loginTitle": "আপনার অ্যাকাউন্টে লগইন করুন",
     "loginSubtitle": "লগইন করতে আপনার ক্রেডেনশিয়াল লিখুন",
     "registerTitle": "নতুন অ্যাকাউন্ট নিবন্ধন করুন",
-    "registerSubtitle": "নিবন্ধনের জন্য আপনার ইমেল লিখুন"
+    "registerSubtitle": "নিবন্ধনের জন্য আপনার ইমেল লিখুন",
+    "loginSuccess": "লগইন সফল",
+    "registerSuccess": "নিবন্ধন সফল",
+    "passMismatch": "পাসওয়ার্ড মেলেনি",
+    "sameAsOldPass": "নতুন পাসওয়ার্ড পুরানো পাসওয়ার্ডের মতো হতে পারে না",
+    "passRequired": "পাসওয়ার্ড প্রদান করুন",
+    "logoutSuccess": "লগআউট সফল",
+    "wrongCreds": "ভুল ক্রেডেনশিয়াল"
   },
 
   "user": {
     "edit": "ব্যবহারকারী সম্পাদনা করুন",
     "profile": "ব্যবহারকারীর প্রোফাইল",
-    "createdBy": "সৃষ্টি করেছেন"
+    "createdBy": "তৈরি করেছেন",
+    "notFound": "কোনও ব্যবহারকারী পাওয়া যায়নি",
+    "userAddFail": "ব্যবহারকারী যোগ করা হয়নি",
+    "userEditFail": "ব্যবহারকারী আপডেট করতে ব্যর্থ",
+    "userEditSuccess": "ব্যবহারকারীর বিবরণ আপডেট হয়েছে",
+    "userDeleteFail": "ব্যবহারকারী মুছে ফেলতে ব্যর্থ",
+    "userDeleteSuccess": "ব্যবহারকারী মুছে ফেলা হয়েছে"
   },
 
   "table": {
@@ -87,7 +114,9 @@
   "theme": {
     "light": "আলো",
     "dark": "অন্ধকার",
-    "system": "সিস্টেম"
+    "system": "সিস্টেম",
+    "failMsg": "থিম আপডেট করতে ব্যর্থ",
+    "successMsg": "ব্যবহারকারীর থিম আপডেট হয়েছে"
   },
 
   "dialogs": {

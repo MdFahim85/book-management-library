@@ -87,12 +87,12 @@ export default function AddBookModal() {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.books.root + Server_ROUTEMAP.books.get],
       });
-      if (data) toast.success(data.message);
+      if (data) toast.success(t(data.message));
       setBook(initialBookState);
       setModalOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(t(error.message));
     },
     throwOnError: true,
   });

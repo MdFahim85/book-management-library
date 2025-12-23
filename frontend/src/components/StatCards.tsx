@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 import { EMPTY_ARRAY } from "../misc";
 import Client_ROUTEMAP from "../misc/Client_ROUTEMAP";
+import i18n from "../misc/i18n";
 import { modifiedFetch } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import { useT } from "../types/i18nTypes";
@@ -69,7 +70,11 @@ function StatCards() {
                     <p className="text-xl text-neutral-800 dark:text-neutral-100">
                       {t("dashboard.totalBooks")}
                     </p>
-                    <p className="text-4xl font-bold"> {books.length}</p>
+                    <p className="text-4xl font-bold">
+                      {new Intl.NumberFormat(i18n.language).format(
+                        books.length
+                      )}
+                    </p>
                   </div>
 
                   <BookCopy size={50} />
@@ -93,7 +98,12 @@ function StatCards() {
                     <p className="text-xl text-neutral-800 dark:text-neutral-100">
                       {t("dashboard.totalAuthors")}
                     </p>
-                    <p className="text-4xl font-bold"> {authors.length}</p>
+                    <p className="text-4xl font-bold">
+                      {" "}
+                      {new Intl.NumberFormat(i18n.language).format(
+                        authors.length
+                      )}
+                    </p>
                   </div>
 
                   <UserRoundPen size={50} />

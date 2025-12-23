@@ -49,13 +49,13 @@ export default function Login() {
         }
       ),
     onSuccess: (data) => {
-      if (data) toast.success(data.message);
+      if (data) toast.success(t(data.message));
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
       });
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(t(error.message));
     },
   });
 

@@ -40,7 +40,7 @@ export const getBookDetails: RequestHandler<
   const book = await BookModel.getBookDetailsById(id);
 
   // Throw on failed query
-  if (!book) throw new ResponseError("No book found", status.NOT_FOUND);
+  if (!book) throw new ResponseError("table.noResults", status.NOT_FOUND);
 
   res.json(book);
 };
@@ -58,10 +58,7 @@ export const getBooksByAuthorId: RequestHandler<
 
   // Throw on failed query
   if (!booksByAuthor.length)
-    throw new ResponseError(
-      "No books found under this author",
-      status.NOT_FOUND
-    );
+    throw new ResponseError("table.noResults", status.NOT_FOUND);
 
   res.json(booksByAuthor);
 };
@@ -79,7 +76,7 @@ export const addBook: RequestHandler<
 
   // Throw if no file
   if (!fileUrl?.[0])
-    throw new ResponseError("Please attach a pdf", status.BAD_REQUEST);
+    throw new ResponseError("forms.uploadPDF", status.BAD_REQUEST);
 
   // set book path to file path
   const json: Book = JSON.parse(req.body.json || "");
@@ -97,13 +94,13 @@ export const addBook: RequestHandler<
       if (await fileExists(fileUrl![0]!.path))
         await fs.unlink(fileUrl![0]!.path);
       tx.rollback();
-      throw new ResponseError("Failed to add book", status.BAD_REQUEST);
+      throw new ResponseError("books.bookAddFail", status.BAD_REQUEST);
     }
 
     return result;
   });
 
-  res.status(201).json({ message: "New book Added", data: book });
+  res.status(201).json({ message: "books.bookAddSuccess", data: book });
 };
 
 // Edit book
@@ -133,13 +130,10 @@ export const editBook: RequestHandler<
   const book = await db.transaction(async (tx) => {
     // Old book lookup
     const oldBook = await BookModel.getBookById(id, tx);
-    if (!oldBook) throw new ResponseError("Book not found", status.NOT_FOUND);
+    if (!oldBook) throw new ResponseError("table.noResults", status.NOT_FOUND);
 
     if (oldBook.createdBy !== user!.id)
-      throw new ResponseError(
-        "You are not the creator of this book",
-        status.UNAUTHORIZED
-      );
+      throw new ResponseError("books.notBookOwner", status.UNAUTHORIZED);
 
     const result = await BookModel.editBook(
       id,
@@ -153,7 +147,7 @@ export const editBook: RequestHandler<
         await fs.unlink(newFilePath);
       }
       tx.rollback();
-      throw new ResponseError("Failed to update the book", status.BAD_REQUEST);
+      throw new ResponseError("books.bookEditFail", status.BAD_REQUEST);
     }
 
     const oldBookPath = path.join(config.uploadDir, oldBook.fileUrl);
@@ -165,7 +159,7 @@ export const editBook: RequestHandler<
     return result;
   });
 
-  res.json({ message: "Book has been updated", data: book });
+  res.json({ message: "books.bookEditSuccess", data: book });
 };
 
 // Delete book
@@ -183,13 +177,10 @@ export const deleteBook: RequestHandler<
 
     // Throw on failed query
     if (!deletedBook)
-      throw new ResponseError("No book found", status.NOT_FOUND);
+      throw new ResponseError("table.noResults", status.NOT_FOUND);
 
     if (deletedBook.createdBy !== user!.id)
-      throw new ResponseError(
-        "You are not the creator of this book",
-        status.UNAUTHORIZED
-      );
+      throw new ResponseError("books.notBookOwner", status.UNAUTHORIZED);
 
     // Transaction start
     const result = await BookModel.deleteBook(id, tx);
@@ -197,7 +188,7 @@ export const deleteBook: RequestHandler<
     // Rollback on failed query
     if (!result) {
       tx.rollback();
-      throw new ResponseError("Failed to delete book", status.BAD_REQUEST);
+      throw new ResponseError("books.bookDeleteFail", status.BAD_REQUEST);
     }
 
     const deletedBookPath = path.join(config.uploadDir, deletedBook.fileUrl);

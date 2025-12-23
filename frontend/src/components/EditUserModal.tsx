@@ -55,11 +55,11 @@ export default function EditUserModal() {
       queryClient.invalidateQueries({
         queryKey: [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
       });
-      if (data) toast.success(data.message);
+      if (data) toast.success(t(data.message));
       setModalOpen(false);
     },
     onError: (error) => {
-      toast.error(error.message);
+      toast.error(t(error.message));
     },
     throwOnError: true,
   });

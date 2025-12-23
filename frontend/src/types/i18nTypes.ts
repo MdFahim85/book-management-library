@@ -31,8 +31,11 @@ export function t(
   return i18n.t(key, options);
 }
 
-export function useT() {
+export function useT(): {
+  (key: TranslationKey, options?: Record<string, unknown>): string;
+  (key: string, options?: Record<string, unknown>): string;
+} {
   const { t } = useTranslation();
-  return (key: TranslationKey, options?: Record<string, unknown>) =>
-    t(key, options);
+
+  return (key: string, options?: Record<string, unknown>) => t(key, options);
 }
