@@ -7,11 +7,10 @@ export default {
     authorDetails: ":id",
   },
   books: {
-    _params: { id: ":id", authorId: ":authorId" },
+    _params: { id: ":id" },
     root: "books",
     index: "",
     bookDetails: ":id",
-    authorBooks: "author/:authorId",
   },
   auth: {
     root: "/auth",

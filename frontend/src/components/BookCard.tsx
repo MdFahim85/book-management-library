@@ -19,10 +19,15 @@ function BookCard({ book }: { book: Book }) {
     <div className="w-full">
       <div className="flex items-center gap-4 w-full py-4 pe-2">
         <Link
-          to={Client_ROUTEMAP.books.bookDetails.replace(
-            Client_ROUTEMAP.books._params.id,
-            book.id.toString()
-          )}
+          to={
+            Client_ROUTEMAP._ +
+            Client_ROUTEMAP.books.root +
+            "/" +
+            Client_ROUTEMAP.books.bookDetails.replace(
+              Client_ROUTEMAP.books._params.id,
+              book.id.toString()
+            )
+          }
         >
           <div className="font-semibold text-neutral-800 dark:text-neutral-100 tracking-wide flex gap-4">
             {book.name}

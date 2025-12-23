@@ -29,7 +29,7 @@ export default function SideBar() {
         { method: "post" }
       ),
     onSuccess: (data) => {
-      if (data) toast.success(data.message);
+      if (data) toast.success(t(data.message));
       queryClient.setQueryData(
         [Server_ROUTEMAP.users.root + Server_ROUTEMAP.users.self],
         null

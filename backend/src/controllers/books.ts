@@ -11,7 +11,11 @@ import BookModel, {
 import ROUTEMAP from "../routes/ROUTEMAP";
 import { fileExists } from "../utils";
 import ResponseError from "../utils/ResponseError";
-import { authorIdValidator, idValidator } from "../utils/validators";
+import {
+  authorIdValidator,
+  idValidator,
+  pdfValidator,
+} from "../utils/validators";
 import path from "path";
 import config from "../config";
 
@@ -78,6 +82,15 @@ export const addBook: RequestHandler<
   if (!fileUrl?.[0])
     throw new ResponseError("forms.uploadPDF", status.BAD_REQUEST);
 
+  // Check if actual pdf
+  if (!(await pdfValidator(fileUrl[0].path))) {
+    await fs.unlink(fileUrl[0].path);
+    throw new ResponseError(
+      "Please upload a valid PDF",
+      status.UNSUPPORTED_MEDIA_TYPE
+    );
+  }
+
   // set book path to file path
   const json: Book = JSON.parse(req.body.json || "");
   json.fileUrl = fileUrl[0].filename;
@@ -123,6 +136,15 @@ export const editBook: RequestHandler<
 
   //Set book path to file path if new file is provided
   if (fileUrl?.[0]?.size) {
+    // Check if actual pdf
+    if (!(await pdfValidator(fileUrl[0].path))) {
+      await fs.unlink(fileUrl[0].path);
+      throw new ResponseError(
+        "Please upload a valid PDF",
+        status.UNSUPPORTED_MEDIA_TYPE
+      );
+    }
+    // Continue
     json.fileUrl = fileUrl[0].filename;
   }
 

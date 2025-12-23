@@ -67,7 +67,7 @@ const fileFilter: multer.Options["fileFilter"] = (_, file, cb) => {
   if (file.mimetype !== "application/pdf") {
     cb(
       new ResponseError(
-        "Please upload PDF file only",
+        "Please upload a valid PDF",
         status.UNSUPPORTED_MEDIA_TYPE
       )
     );

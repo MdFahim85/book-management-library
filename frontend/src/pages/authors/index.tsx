@@ -28,7 +28,6 @@ import { modifiedFetch } from "../../misc/modifiedFetch";
 import Server_ROUTEMAP from "../../misc/Server_ROUTEMAP";
 import { useT } from "../../types/i18nTypes";
 
-
 import type { getAuthors } from "@backend/controllers/authors";
 import type { Author } from "@backend/models/Author";
 import type { GetRes } from "@backend/types/req-res";

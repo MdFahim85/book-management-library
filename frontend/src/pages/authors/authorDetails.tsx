@@ -23,6 +23,7 @@ import { useT } from "../../types/i18nTypes";
 
 import type { getAuthorDetailsById } from "@backend/controllers/authors";
 import type { GetRes } from "@backend/types/req-res";
+import BooksByAuthor from "../../components/BooksByAuthor";
 
 export default function AuthorDetails() {
   const t = useT();
@@ -55,7 +56,7 @@ export default function AuthorDetails() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="mx-auto">
         <Link to={Client_ROUTEMAP.authors.root}>
           <Button variant="ghost" className="mb-6">
@@ -109,6 +110,9 @@ export default function AuthorDetails() {
             </CardFooter>
           )}
         </Card>
+      </div>
+      <div>
+        <BooksByAuthor author={author} />
       </div>
     </div>
   );

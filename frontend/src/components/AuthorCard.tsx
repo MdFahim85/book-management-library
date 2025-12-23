@@ -44,6 +44,7 @@ function AuthorCard({ author }: { author: Author }) {
           </div>
         )}
       </div>
+      <div></div>
     </div>
   );
 }

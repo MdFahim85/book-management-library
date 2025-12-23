@@ -16,7 +16,6 @@ const AuthorDetailsLazy = lazy(() => import("./pages/authors/authorDetails"));
 
 const BooksLazy = lazy(() => import("./pages/books/index"));
 const BookDetailsLazy = lazy(() => import("./pages/books/bookDetails"));
-const BooksByAuthorLazy = lazy(() => import("./components/BooksByAuthor"));
 
 const RouteComponent = () => (
   <ErrorBoundaryWithRouter>
@@ -93,16 +92,6 @@ const RouteComponent = () => (
               <Suspense fallback={<LoadingPage />}>
                 <ProtectedRoute allowLoggedInOnly>
                   <BookDetailsLazy />
-                </ProtectedRoute>
-              </Suspense>
-            }
-          />
-          <Route
-            path={Client_ROUTEMAP.books.authorBooks}
-            element={
-              <Suspense fallback={<LoadingPage />}>
-                <ProtectedRoute>
-                  <BooksByAuthorLazy />
                 </ProtectedRoute>
               </Suspense>
             }
