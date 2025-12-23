@@ -33,4 +33,11 @@ export default {
     language: "/language/:id",
     delete: "/:id",
   },
+  stats: {
+    _params: { bookId: ":bookId", userId: ":userId" },
+    root: "/stats",
+    getBookStats: "/:bookId",
+    getBookByUserStats: "/:bookId/:userId",
+    post: "/",
+  },
 } as const satisfies typeof ROUTEMAP;

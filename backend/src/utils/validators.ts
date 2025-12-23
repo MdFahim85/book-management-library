@@ -15,6 +15,11 @@ export const userValidator = z.object({
   password: z.string().min(6).max(255),
 });
 
+export const statIdValidator = z.object({
+  bookId: zodCoerce.number().int().positive(),
+  userId: zodCoerce.number().int().positive(),
+});
+
 export const pdfValidator = async (filePath: string): Promise<boolean> => {
   const file = await fs.open(filePath, "r");
 
