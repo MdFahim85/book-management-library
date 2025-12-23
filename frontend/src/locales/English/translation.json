@@ -108,7 +108,8 @@
     "serialNumber": "S/N",
     "noResults": "No results",
     "prev": "Prev",
-    "next": "Next"
+    "next": "Next",
+    "pages": "Pages"
   },
 
   "theme": {

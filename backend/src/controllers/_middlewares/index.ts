@@ -63,7 +63,26 @@ const storage = multer.diskStorage({
   },
 });
 
-export const upload = multer({ storage });
+const fileFilter: multer.Options["fileFilter"] = (_, file, cb) => {
+  if (file.mimetype !== "application/pdf") {
+    cb(
+      new ResponseError(
+        "Please upload PDF file only",
+        status.UNSUPPORTED_MEDIA_TYPE
+      )
+    );
+  } else {
+    cb(null, true);
+  }
+};
+
+export const upload = multer({
+  storage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+});
 
 export const authMiddleware: RequestHandler = async (req, _res, next) => {
   const { token } = req.cookies;

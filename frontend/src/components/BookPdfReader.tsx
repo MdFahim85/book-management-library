@@ -11,19 +11,31 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 
+import i18n from "../misc/i18n";
 import { API_URL } from "../misc/modifiedFetch";
 import Server_ROUTEMAP from "../misc/Server_ROUTEMAP";
 import { useT } from "../types/i18nTypes";
 
 import type { Book } from "@backend/models/Book";
 
+
 export default function BookPdfReader({ book }: { book: Book }) {
   const t = useT();
 
   const [numPages, setNumPages] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
     setNumPages(numPages);
+    setPageNumber(1);
+  }
+
+  function nextPage() {
+    setPageNumber((prev) => (prev < numPages ? prev + 1 : prev));
+  }
+
+  function prevPage() {
+    setPageNumber((prev) => (prev > 1 ? prev - 1 : prev));
   }
 
   return (
@@ -37,7 +49,7 @@ export default function BookPdfReader({ book }: { book: Book }) {
 
       <DialogContent
         className="
-            min-w-[50vw]
+            min-w-[80vw]
             h-[80vh]
             flex
             flex-col
@@ -63,24 +75,31 @@ export default function BookPdfReader({ book }: { book: Book }) {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto rounded-md border dark:invert dark:hue-rotate-180 bg-neutral-300">
+        <div className="flex-1 overflow-y-auto rounded-md border dark:invert dark:hue-rotate-180 ">
           <center>
             <Document
               file={API_URL + Server_ROUTEMAP.uploads + "/" + book.fileUrl}
               onLoadSuccess={onDocumentLoadSuccess}
             >
-              {Array.from(new Array(numPages), (_, index) => (
-                <Page
-                  key={`page_${index + 1}`}
-                  pageNumber={index + 1}
-                  width={800}
-                  className="mx-auto my-1"
-                  renderTextLayer={false}
-                  renderAnnotationLayer={false}
-                />
-              ))}
+              <Page
+                key={`page_${pageNumber}`}
+                pageNumber={pageNumber}
+                width={1000}
+                className="mx-auto my-1 h-full"
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+              />
             </Document>
           </center>
+        </div>
+        <div className="flex justify-center items-center gap-4">
+          <Button onClick={prevPage}>{t("table.prev")}</Button>
+          <Button onClick={nextPage}>{t("table.next")}</Button>
+        </div>
+        <div className="text-center font-bold">
+          {t("table.pages")} -{" "}
+          {new Intl.NumberFormat(i18n.language).format(pageNumber)} /
+          {new Intl.NumberFormat(i18n.language).format(numPages)}
         </div>
       </DialogContent>
     </Dialog>
